@@ -10,7 +10,8 @@ import {
   Link,
   Redirect
 } from 'react-router-dom'
-import LobbyPage from './pages/LobbyPage';
+
+import LobbyPage from './pages/LobbyPage/index';
 
 //pages
 import HomePage from './pages/HomePage'

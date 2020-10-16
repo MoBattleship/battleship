@@ -1,5 +1,5 @@
 import React from 'react'
-import PlayerCard from '../components/PlayerCard'
+import PlayerCard from './components/PlayerCard'
 import { Button } from 'react-bootstrap'
 
 

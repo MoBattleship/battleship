@@ -22,7 +22,7 @@ function Board3Players() {
                 {
                   row.map((coll, collIdx) => {
                     return (
-                      <div>
+                      <div key={collIdx}>
                         {
                           rowIdx === 0 && collIdx !== 0 && <div key={collIdx} className="border border-white bg-dark text-white column align-items-center justify-content-center align-items-center" style={{backgroundColor: "#fff", width: "40px", height: "40px"}}>{alphabeth[collIdx]}</div>
                         }
