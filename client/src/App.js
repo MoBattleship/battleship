@@ -11,13 +11,16 @@ import {
   Redirect
 } from 'react-router-dom'
 
+//pages
+import HomePage from './pages/HomePage'
+
 function App() {
   return (
     // <Provider store={store}>
       <Router>
       <div className="App">
         <Switch>
-          
+          <Route exact path="/" component={HomePage} />
         </Switch>
       </div>
       </Router>
