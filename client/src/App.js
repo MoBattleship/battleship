@@ -10,6 +10,7 @@ import {
   Link,
   Redirect
 } from 'react-router-dom'
+import LobbyPage from './pages/LobbyPage';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
       <Router>
       <div className="App">
         <Switch>
-          
+          <Route path='/lobby' component={LobbyPage} />
         </Switch>
       </div>
       </Router>
