@@ -10,6 +10,7 @@ import {
   Link,
   Redirect
 } from 'react-router-dom'
+import LobbyPage from './pages/LobbyPage';
 
 //pages
 import HomePage from './pages/HomePage'
@@ -21,6 +22,10 @@ function App() {
       <div className="App">
         <Switch>
           <Route exact path="/" component={HomePage} />
+          <Route path='/lobby' component={LobbyPage} />
+
+          
+
         </Switch>
       </div>
       </Router>

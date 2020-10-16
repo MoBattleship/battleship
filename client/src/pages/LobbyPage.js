@@ -1,9 +1,42 @@
 import React from 'react'
+import PlayerCard from '../components/PlayerCard'
+import { Button } from 'react-bootstrap'
+
 
 function LobbyPage () {
+    let players=[
+        {
+            name: 'Arrizal'
+        },
+        {
+            name: 'Fariz'
+        },
+        {
+            name: 'Juan'
+        },
+        {
+            name: 'Izra'
+        }
+    ]
     return (
-        <div>
-
+        <div className="container mt-3">
+            <h1 style={{fontFamily: 'Piedra'}}>Waiting Room</h1>
+            <div className="container border rounded-lg shadow-sm">
+                <div className="row justify-content-center">
+                    <h4 style={{fontFamily: 'Piedra'}}>Players List</h4>
+                </div>
+                <div className="row justify-content-center">
+                    {players.map((player, index) => {
+                        return (
+                            <PlayerCard
+                                key={index}
+                                playerData={player}
+                            ></PlayerCard>
+                        )
+                    })}
+                </div>
+                <Button type="button-lg mt-3 mb-3">Start Game</Button>
+            </div>
         </div>
     )
 }
