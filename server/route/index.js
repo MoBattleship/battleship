@@ -1,5 +1,10 @@
-const router = require('express').Router()
+const { generateCode } = require('../helpers')
 
-console.log('abc');
+const route = require('express').Router()
 
-module.exports = router
+
+route.get('/host', (req, res) => {
+  console.log(generateCode())
+})
+
+module.exports = route
