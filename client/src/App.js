@@ -11,7 +11,7 @@ import {
   Redirect
 } from 'react-router-dom'
 
-import GamePage from './pages/GamePage'
+import GamePage from './pages/GamePage/index'
 
 function App() {
   return (
