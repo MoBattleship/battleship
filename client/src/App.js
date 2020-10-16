@@ -11,17 +11,17 @@ import {
   Redirect
 } from 'react-router-dom'
 
+import GamePage from './pages/GamePage'
+
 function App() {
   return (
-    // <Provider store={store}>
-      <Router>
+    <Router>
       <div className="App">
         <Switch>
-          
+          <Route path="/games" component={GamePage} />
         </Switch>
       </div>
-      </Router>
-    // </Provider>
+    </Router>
   );
 }
 
