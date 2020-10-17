@@ -7,8 +7,8 @@ describe("Socket - Lobby System", function () {
   let dummySocket
   let code
   before((done) => {
-    socket = io("http://localhost:3000");
-    dummySocket = io('http://localhost:3000')
+    socket = io("http://localhost:4000");
+    dummySocket = io('http://localhost:4000')
     done();
   });
 
@@ -37,6 +37,8 @@ describe("Socket - Lobby System", function () {
       dummySocket.emit('join', {code, name: 'imATest'})
       dummySocket.on('joined', (res) => {
         console.log(res);
+        expect(res.players).to.have.lengthOf(2)
+        expect(res.players[1].name).to.be.equal('imATest')
         done()
       })
     })
