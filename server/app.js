@@ -40,6 +40,7 @@ io.on("connection", (socket) => {
 
     const { ops } = await db.collection("lobby").insertOne({
       code,
+
       players: [
         {
           name,
@@ -54,53 +55,59 @@ io.on("connection", (socket) => {
 
   // LEAVE
 
-  socket.on('leave', async (payload) => {
-    const { name, code } = payload
-    const room = await db.collection('lobby').findOne({ code })
+  socket.on("leave", async (payload) => {
+    const { name, code } = payload;
+    const room = await db.collection("lobby").findOne({ code });
     if (room.players.length === 1) {
-      await db.collection('lobby').deleteOne({ code })
-      socket.leave(code)
+      await db.collection("lobby").deleteOne({ code });
+      socket.leave(code);
     } else {
-      const newRoom = await db.collection('lobby').updateOne({ code }, {
-        $pull: {
-          players: {
-            $in: [
-              {
-                name
-              }
-            ]
-          }
+      const newRoom = await db.collection("lobby").updateOne(
+        { code },
+        {
+          $pull: {
+            players: {
+              $in: [
+                {
+                  name,
+                },
+              ],
+            },
+          },
         }
-      })
-      socket.leave(code)
-      io.to(code).emit('updateRoom', newRoom)
-      io.to(code).emit('leaveMessage', `${name} has left the lobby.`)
+      );
+      socket.leave(code);
+      io.to(code).emit("updateRoom", newRoom);
+      io.to(code).emit("leaveMessage", `${name} has left the lobby.`);
     }
-  })
+  });
 
   // JOIN
 
   socket.on("join", async (payload) => {
-    const {code, name} = payload
-    const room = await db.collection('lobby').findOne({ code })
+    const { code, name } = payload;
+    const room = await db.collection("lobby").findOne({ code });
     if (room) {
       if (room.players.length < 5) {
-        await db.collection('lobby').findOneAndUpdate({ code }, {
-          $push: {
-            players: {
-              name,
-              color: colours[room.players.length]
-            }
+        await db.collection("lobby").findOneAndUpdate(
+          { code },
+          {
+            $push: {
+              players: {
+                name,
+                color: colours[room.players.length],
+              },
+            },
           }
-        })
-        const joinedRoom = await db.collection('lobby').findOne({ code })
-        socket.join(code)
-        io.to(code).emit('joined', joinedRoom)
+        );
+        const joinedRoom = await db.collection("lobby").findOne({ code });
+        socket.join(code);
+        io.to(code).emit("joined", joinedRoom);
       } else {
-        socket.emit('roomFull', 'The room you\'re entering is full.')
+        socket.emit("roomFull", "The room you're entering is full.");
       }
     } else {
-      socket.emit('noRoom', 'Room not found.')
+      socket.emit("noRoom", "Room not found.");
     }
   });
 
@@ -110,7 +117,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("ada yg dc!");
-    socket.disconnect()
+    socket.disconnect();
   });
 });
 
