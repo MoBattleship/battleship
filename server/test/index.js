@@ -1,7 +1,8 @@
 const io = require("socket.io-client");
-const { expect, assert, should } = require("chai");
+const { expect } = require("chai");
+const db = require("../mongo/test");
 
-describe("Socket-Server", function () {
+describe("Socket - Lobby System", function () {
   let socket;
   before((done) => {
     socket = io("http://localhost:3000");
@@ -10,12 +11,13 @@ describe("Socket-Server", function () {
 
   after((done) => {
     socket.disconnect();
+    db.collection('lobby').deleteMany()
     done();
   });
 
-  describe("Test", () => {
-    it("Host - Response", function (done) {
-      socket.emit("host", {name: 'izra', color: 'red'});
+  describe("Host Tests", () => {
+    it("Host - Success Hosting", function (done) {
+      socket.emit("host", {name: 'izra'});
       socket.on("hostResponse", (res) => {
         expect(res.code).to.have.lengthOf(6)
         expect(res.code).to.be.a('string')
@@ -23,7 +25,15 @@ describe("Socket-Server", function () {
         done();
       });
     });
-
-    
   });
+
+  describe('Join Test', () => {
+    it("Join - Success Joining", (done) => {
+      const dummySocket = io('http://localhost:3000')
+      socket.emit('host', {name: 'dummyhost'})
+      socket.on('hostResponse', (res) => {
+        dummySocket.emit('join')
+      })
+    })
+  })
 });
