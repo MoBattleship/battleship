@@ -5,11 +5,26 @@ import { Button } from 'react-bootstrap'
 
 
 function LobbyPage (props) {
+    console.log(props, "<<< ini props")
+    // let proppedPlayers = props.location.state.roomCode.players
     let roomCode = props.location.state.roomCode.code
-    let host = props.location.state.roomCode.players[0]
-    const [players, setPlayers] = useState([host])
-    console.log(roomCode, 'ini roomCode di lobbyoage')
+    const [players, setPlayers] = useState([])
+    // console.log(roomCode, 'ini roomCode di lobbyoage')
     console.log(players, 'ini players di lobby')
+
+    useEffect(() => {
+        setPlayers(props.location.state.roomCode.players)
+    }, [players])
+
+    useEffect(() => {
+        socket.on("joined", async (res) => {
+            setPlayers(res.players)
+        });
+    
+        return () => socket.disconnect();
+      });
+
+    // console.log(host, "<<< ini host" )
 
     return (
         <div className="container mt-3">
