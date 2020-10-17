@@ -6,15 +6,11 @@ const io = require("socket.io")(http);
 const db = require("./mongo");
 const port = process.env.PORT || 4000;
 
-const route = require("./route/");
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use("/", route);
-
 io.on("connection", (socket) => {
-  console.log("connection!!!");
+  console.log("connection by", socket.id);
 
   const colours = [
     "#f9ca24",
@@ -49,8 +45,8 @@ io.on("connection", (socket) => {
       ],
     });
     const newLobby = ops[0];
-    socket.emit("hostResponse", newLobby);
     socket.join(code);
+    socket.emit("updateRoom", newLobby);
   });
 
   // LEAVE
@@ -58,27 +54,26 @@ io.on("connection", (socket) => {
   socket.on("leave", async (payload) => {
     const { name, code } = payload;
     const room = await db.collection("lobby").findOne({ code });
-    if (room.players.length === 1) {
+    if (!room) {
+      
+    } else if (room.players.length === 1) {
       await db.collection("lobby").deleteOne({ code });
       socket.leave(code);
     } else {
-      const newRoom = await db.collection("lobby").updateOne(
+      await db.collection("lobby").updateOne(
         { code },
         {
           $pull: {
             players: {
-              $in: [
-                {
-                  name,
-                },
-              ],
+              name,
             },
           },
         }
       );
+      const newRoom = await db.collection("lobby").findOne({ code });
       socket.leave(code);
+      newRoom.message = `${name} has left the lobby.`;
       io.to(code).emit("updateRoom", newRoom);
-      io.to(code).emit("leaveMessage", `${name} has left the lobby.`);
     }
   });
 
@@ -88,7 +83,7 @@ io.on("connection", (socket) => {
     const { code, name } = payload;
     const room = await db.collection("lobby").findOne({ code });
     if (room) {
-      if (room.players.length < 5) {
+      if (room.players.length < 4) {
         await db.collection("lobby").findOneAndUpdate(
           { code },
           {
@@ -102,12 +97,14 @@ io.on("connection", (socket) => {
         );
         const joinedRoom = await db.collection("lobby").findOne({ code });
         socket.join(code);
-        io.to(code).emit("joined", joinedRoom);
+        io.to(code).emit("updateRoom", joinedRoom);
       } else {
-        socket.emit("roomFull", "The room you're entering is full.");
+        socket.emit("roomFull", {
+          message: "The room you're entering is full.",
+        });
       }
     } else {
-      socket.emit("noRoom", "Room not found.");
+      socket.emit("noRoom", { message: "Room not found." });
     }
   });
 
@@ -115,10 +112,13 @@ io.on("connection", (socket) => {
     io.emit("abc", "hello");
   });
 
+  socket.on("nukeDatabase", async () => {
+    await db.collection("lobby").deleteMany({});
+  });
+
   socket.on("disconnect", () => {
-    console.log("ada yg dc!");
+    console.log(socket.id, " disconnected.");
     socket.disconnect();
-    console.log('apakah masih?');
   });
 });
 
