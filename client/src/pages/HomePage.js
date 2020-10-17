@@ -19,15 +19,6 @@ function HomePage () {
         
     }
 
-    // async function settingRoomCode(code) {
-    //     try {
-    //     await setRoomCode(code)
-    //     history.push('/lobby', {roomCode})
-    //     } catch(err) {
-    //         console.log(err)
-    //     }
-    // }
-
     useEffect(() => {
         socket.on("hostResponse", async ( res ) => {
             console.log(res.players, 'ini response server')
