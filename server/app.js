@@ -118,6 +118,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("ada yg dc!");
     socket.disconnect();
+    console.log('apakah masih?');
   });
 });
 
