@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import socket from '../helpers/socket'
+import { useHistory } from 'react-router-dom'
+
 
 function HomePage () {
     const [name, setName] = useState("")
+    const [roomCode, setRoomCode] = useState("")
+    const history = useHistory()
 
     
     const handleInputName = (event) => {
@@ -10,17 +14,27 @@ function HomePage () {
     }
 
     const handleHost = () => {
-        socket.emit("message", "alex")
+        console.log(name, 'ini name yg dikirim ke server')
+        socket.emit("host", {name})
+        
     }
 
     useEffect(() => {
-        socket.on("abc", ( data ) => {
-            setName(data)
+        socket.on("hostResponse", async ( res ) => {
+            console.log(res.players, 'ini response server')
+            await setRoomCode(JSON.parse(JSON.stringify(res)))
+            console.log(roomCode, 'ini roomCode')
+            // history.push('/lobby', {roomCode})
         })
 
         return () => socket.disconnect();
     }, [])
 
+    useEffect(() => {
+        if (roomCode !== "") {
+            history.push('/lobby', {roomCode})
+        }
+    }, [roomCode])
     return (
         <div>
             <div className="splash-container">

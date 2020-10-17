@@ -1,10 +1,11 @@
 const express = require("express");
 const { generateCode } = require("./helpers");
 const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
-const db = require("./mongo");
-const port = process.env.PORT || 3000;
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+const db = require('./mongo')
+const port = process.env.PORT || 4000;
+
 
 const route = require("./route/");
 
@@ -38,6 +39,7 @@ io.on("connection", (socket) => {
 
     const { ops } = await db.collection("lobby").insertOne({
       code,
+
       players: [
         {
           name,
