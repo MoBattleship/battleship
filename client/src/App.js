@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import { Provider } from "react-redux";
@@ -11,14 +11,13 @@ import {
   Redirect
 } from 'react-router-dom'
 
-import LobbyPage from './pages/LobbyPage/index';
-
 //pages
 import HomePage from './pages/HomePage'
-
 import GamePage from './pages/GamePage/index'
+import LobbyPage from './pages/LobbyPage/index';
 
 function App() {
+
   return (
     <Router>
       <div className="App">
