@@ -1,8 +1,10 @@
 const express = require("express");
+const { generateCode } = require("./helpers");
 const app = express();
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
-const port = process.env.PORT || 4000;
+const db = require('./mongo')
+const port = process.env.PORT || 3000;
 
 const route = require('./route/')
 
@@ -14,8 +16,23 @@ app.use('/', route)
 io.on('connection', socket => {
   console.log('connection!!!');
 
-  socket.on('host', () => {
+  socket.on('host', async (res) => {
+    const {name, color} = res
+    const code = generateCode()
+    const {ops} = await db.collection('lobby').insertOne({
+      code,
+      players: [{
+        name,
+        color
+      }]
+    })
+    const newLobby = ops[0]
+    socket.emit('hostResponse', newLobby)
+    socket.join(code)
+  })
 
+  socket.on('join', () => {
+    
   })
 
   socket.on('message', () => {

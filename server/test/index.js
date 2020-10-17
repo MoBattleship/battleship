@@ -3,24 +3,27 @@ const { expect, assert, should } = require("chai");
 
 describe("Socket-Server", function () {
   let socket;
-  beforeEach((done) => {
+  before((done) => {
     socket = io("http://localhost:3000");
     done();
   });
 
-  afterEach((done) => {
+  after((done) => {
     socket.disconnect();
     done();
   });
 
   describe("Test", () => {
-    it("Message test", function (done) {
-      socket.emit("message");
-      socket.on("abc", (message) => {
-        console.log(message, "ini dari test");
-        assert(message === "hello", "message should be hello");
+    it("Host - Response", function (done) {
+      socket.emit("host", {name: 'izra', color: 'red'});
+      socket.on("hostResponse", (res) => {
+        expect(res.code).to.have.lengthOf(6)
+        expect(res.code).to.be.a('string')
+        expect(res.players).to.be.an('array')
         done();
       });
     });
+
+    
   });
 });
