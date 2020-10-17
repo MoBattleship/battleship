@@ -26,6 +26,8 @@ io.on("connection", (socket) => {
     "#f8a5c2",
   ];
 
+  // HOST
+
   socket.on("host", async (payload) => {
     const { name } = payload;
     let code = generateCode();
@@ -50,6 +52,8 @@ io.on("connection", (socket) => {
     socket.join(code);
   });
 
+  // LEAVE
+
   socket.on('leave', async (payload) => {
     const { name, code } = payload
     const room = await db.collection('lobby').findOne({ code })
@@ -69,13 +73,35 @@ io.on("connection", (socket) => {
         }
       })
       socket.leave(code)
-      socket.to(code).emit('updateRoom', newRoom)
-      socket.to(code).emit('leaveMessage', `${name} has left the lobby.`)
+      io.to(code).emit('updateRoom', newRoom)
+      io.to(code).emit('leaveMessage', `${name} has left the lobby.`)
     }
   })
 
+  // JOIN
+
   socket.on("join", async (payload) => {
-    // const {code, name} = 
+    const {code, name} = payload
+    const room = await db.collection('lobby').findOne({ code })
+    if (room) {
+      if (room.players.length < 5) {
+        await db.collection('lobby').findOneAndUpdate({ code }, {
+          $push: {
+            players: {
+              name,
+              color: colours[room.players.length]
+            }
+          }
+        })
+        const joinedRoom = await db.collection('lobby').findOne({ code })
+        socket.join(code)
+        io.to(code).emit('joined', joinedRoom)
+      } else {
+        socket.emit('roomFull', 'The room you\'re entering is full.')
+      }
+    } else {
+      socket.emit('noRoom', 'Room not found.')
+    }
   });
 
   socket.on("message", () => {
