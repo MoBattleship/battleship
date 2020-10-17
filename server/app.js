@@ -4,7 +4,7 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const db = require("./mongo");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 const route = require("./route/");
 
@@ -110,6 +110,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("ada yg dc!");
+    socket.disconnect()
   });
 });
 
