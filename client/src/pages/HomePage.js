@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import socket from "../helpers/socket";
 import { useHistory } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
 
@@ -14,7 +13,6 @@ mic.lang = "id-ID";
 
 function HomePage() {
   const [name, setName] = useState("");
-  const [roomCode, setRoomCode] = useState("");
   const [isListening, setIsListening] = useState(false);
   const history = useHistory();
   const [code, setCode] = useState("");
@@ -23,17 +21,9 @@ function HomePage() {
     name && setShow(true);
   };
   const [show, setShow] = useState(false);
-  const [noRoom, setNoRoom] = useState(false)
-  const [roomFull, setRoomFull] = useState(false)
-  const [payload, setPayload] = useState({}) 
 
   const handleJoin = (e) => {
-    socket.emit("join", { code, name });
-    socket.on("joined", (res) => {
-        setPayload(res)
-    })
-    socket.on("noRoom", (res) => setNoRoom(true))
-    socket.on("roomFull", (res) => setRoomFull(true))
+    history.push("/lobby", { code, name, status: "member" })
   };
 
   const handleInputCode = (event) => {
@@ -45,51 +35,13 @@ function HomePage() {
   };
   
   const handleHost = () => {
-    console.log(name, "ini name yg dikirim ke server");
-    socket.emit("host", { name });
+    history.push('/lobby', { name, status: "host" })
   };
 
 
   useEffect(() => {
     handleListen();
   }, [isListening]);
-
-  useEffect(() => {
-    socket.on("hostResponse", (res) => {
-      console.log(res.players, "ini response server");
-      setRoomCode(res)
-      console.log(roomCode, "ini roomCode");
-      // history.push('/lobby', {roomCode})
-    });
-
-    return () => socket.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (roomCode !== "") {
-      mic.stop();
-      // console.log(isListening, 'ini isListening sebelum pindah page')
-      history.push("/lobby", { roomCode });
-    }
-  }, [roomCode]);
-
-  useEffect(() => {
-      if (noRoom && roomFull) {
-          
-      }
-  })
-
-
-
-//   useEffect(() => {
-//     socket.on("joined", async (res) => {
-//         await setRoomCode(JSON.parse(JSON.stringify(res)))
-//         console.log(roomCode, "<<< join roomcode")
-//         history.push('/lobby', { roomCode })
-//     });
-
-//     return () => socket.disconnect();
-//   }, []);
 
   function handleListen() {
     if (isListening) {
