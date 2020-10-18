@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
       code = generateCode();
       room = await db.collection("lobby").findOne({ code });
     }
-
+    
     const { ops } = await db.collection("lobby").insertOne({
       code,
 
