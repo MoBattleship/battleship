@@ -38,7 +38,7 @@ function PlayerComputer() {
       <button className="btn btn-info m-1" onClick={handlePositionX}>Horizontal</button>
       <div className={`container ${display}`}>
         {/* Carrier */} 
-        <div className="row m-1 p-1">
+        <div className={`${position} m-1 p-1`}>
           <div className={`${position}`} draggable onDragStart={(e) => onDragStart(e, 5, "carrier")}>
             <div onMouseEnter={e => onMouseEnter(e, 1)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
             <div onMouseEnter={e => onMouseEnter(e, 2)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
@@ -49,7 +49,7 @@ function PlayerComputer() {
         </div>
 
         {/* BattleShip */}
-        <div className="row m-1 p-1">
+        <div className={`${position} m-1 p-1`}>
           <div className={`${position}`} draggable onDragStart={(e) => onDragStart(e, 4, "battleship")}>
             <div onMouseEnter={e => onMouseEnter(e, 1)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
             <div onMouseEnter={e => onMouseEnter(e, 2)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
@@ -59,7 +59,7 @@ function PlayerComputer() {
         </div>
 
         {/* Cruiser */}
-        <div className="row m-1 p-1">
+        <div className={`${position} m-1 p-1`}>
           <div className={`${position}`} draggable onDragStart={(e) => onDragStart(e, 3, "cruiser")}>
             <div onMouseEnter={e => onMouseEnter(e, 1)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
             <div onMouseEnter={e => onMouseEnter(e, 2)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
@@ -68,7 +68,7 @@ function PlayerComputer() {
         </div>
 
         {/* Submarine */}
-        <div className="row m-1 p-1">
+        <div className={`${position} m-1 p-1`}>
           <div className={`${position}`} draggable onDragStart={(e) => onDragStart(e, 3, "submarine")}>
             <div onMouseEnter={e => onMouseEnter(e, 1)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
             <div onMouseEnter={e => onMouseEnter(e, 2)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
@@ -77,7 +77,7 @@ function PlayerComputer() {
         </div>
 
         {/* Destroyer */}
-        <div className="row m-1 p-1">
+        <div className={`${position} m-1 p-1`}>
           <div className={`${position}`} draggable onDragStart={(e) => onDragStart(e, 2, "destroyer")}>
             <div onMouseEnter={e => onMouseEnter(e, 1)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>
             <div onMouseEnter={e => onMouseEnter(e, 2)} className="border border-white" style={{backgroundColor: "#4b5320 ", width: "40px", height: "40px"}}></div>

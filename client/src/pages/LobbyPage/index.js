@@ -17,6 +17,12 @@ function LobbyPage(props) {
   let memberCode = props?.location?.state?.code;
   let memberName = props?.location?.state?.name;
 
+  const handleLeave = () => {
+    socket.emit("leave", { code: memberCode, name: memberName })
+    history.push('/')
+  }
+
+
   useEffect(() => {
     function host() {
       socket.emit("host", { name: hostName });
@@ -42,7 +48,7 @@ function LobbyPage(props) {
       setPlayersData(data.players);
       setRoomCode(data.code);
     });
-  }, []);
+  }, [playersData]);
   return (
     <div className="container mt-3">
       <h5>This is your roomcode: {roomCode}</h5>
@@ -56,7 +62,8 @@ function LobbyPage(props) {
             return <PlayerCard player={player} key={index} />;
           })}
         </div>
-        <Button type="button-lg mt-3 mb-3">Start Game</Button>
+        <Button hidden={hostStatus === "member"} type="button-lg mt-3 mb-3" className="mr-3">Start Game</Button>
+        <Button onClick={handleLeave} type="button-lg mt-3 mb-3" className="btn-danger">Leave Game</Button>
       </div>
     </div>
   );

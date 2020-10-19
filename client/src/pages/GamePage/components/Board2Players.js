@@ -49,6 +49,7 @@ function Board2Players() {
     const isOverBoard = shipsCoordinate[shipsCoordinate.length-1][1]
     isOverBoard <= 15 && setShips({...ships, [name]: shipsCoordinate})
   }
+
   return (
     <div>
       <div className="container">
