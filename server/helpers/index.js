@@ -9,6 +9,13 @@ const generateCode = () => {
   return code
 }
 
+const generateCoordinate = () => {
+  const col = Math.ceil(Math.random() * 15)
+  const row = Math.ceil(Math.random() * 15)
+  return [row, col]
+}
+
 module.exports = {
-  generateCode
+  generateCode,
+  generateCoordinate
 }
