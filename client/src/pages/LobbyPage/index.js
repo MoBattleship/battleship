@@ -18,10 +18,21 @@ function LobbyPage(props) {
   let memberName = props?.location?.state?.name;
 
   const handleLeave = () => {
-    socket.emit("leave", { code: memberCode, name: memberName })
+    socket.emit("leave")
     history.push('/')
   }
 
+  const handleStartGame = () => {
+    socket.emit("startGame")
+    history.push("/games", { roomCode, playersData })
+  }
+
+  useEffect(() => {
+    socket.on("toBoard", ({ code: roomCode, players: playersData }) => {
+      history.push("/games",  { roomCode, playersData } )
+    })
+    
+  }, [])
 
   useEffect(() => {
     function host() {
@@ -46,6 +57,8 @@ function LobbyPage(props) {
   useEffect(() => {
     socket.on("updateRoom", (data) => {
       setPlayersData(data.players);
+      console.log(data.players, "<<< ini update");
+      console.log(playersData, "<< ini playersData")
       setRoomCode(data.code);
     });
   }, [playersData]);
@@ -62,7 +75,7 @@ function LobbyPage(props) {
             return <PlayerCard player={player} key={index} />;
           })}
         </div>
-        <Button hidden={hostStatus === "member"} type="button-lg mt-3 mb-3" className="mr-3">Start Game</Button>
+        <Button hidden={hostStatus === "member"} onClick={handleStartGame} type="button-lg mt-3 mb-3" className="mr-3">Start Game</Button>
         <Button onClick={handleLeave} type="button-lg mt-3 mb-3" className="btn-danger">Leave Game</Button>
       </div>
     </div>

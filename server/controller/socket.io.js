@@ -110,7 +110,7 @@ module.exports = function(io) {
     });
   
     // Color change handler
-    socket.on('changeColor')
+    // socket.on('changeColor')
 
     // Start to board
     socket.on('startGame', async () => {
