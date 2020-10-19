@@ -36,9 +36,9 @@ io.on("connection", (socket) => {
 
     const { ops } = await db.collection("lobby").insertOne({
       code,
-
       players: [
         {
+          socketId: socket.id,
           name,
           color: colours[0],
         },
@@ -46,16 +46,18 @@ io.on("connection", (socket) => {
     });
     const newLobby = ops[0];
     socket.join(code);
+    console.log(socket.id + ' hosted a lobby at ' + code);
     socket.emit("updateRoom", newLobby);
   });
 
   // LEAVE
 
-  socket.on("leave", async (payload) => {
-    const { name, code } = payload;
+  socket.on("leave", async () => {
+    const code = Object.keys(socket.rooms)[1]
+    const id = socket.id
     const room = await db.collection("lobby").findOne({ code });
     if (!room) {
-      
+      console.log('that');
     } else if (room.players.length === 1) {
       await db.collection("lobby").deleteOne({ code });
       socket.leave(code);
@@ -65,14 +67,14 @@ io.on("connection", (socket) => {
         {
           $pull: {
             players: {
-              name,
+              socketId: id,
             },
           },
         }
       );
       const newRoom = await db.collection("lobby").findOne({ code });
       socket.leave(code);
-      newRoom.message = `${name} has left the lobby.`;
+      console.log(socket.id + ' left room ' + code);
       io.to(code).emit("updateRoom", newRoom);
     }
   });
@@ -89,6 +91,7 @@ io.on("connection", (socket) => {
           {
             $push: {
               players: {
+                socketId: socket.id,
                 name,
                 color: colours[room.players.length],
               },
@@ -97,14 +100,21 @@ io.on("connection", (socket) => {
         );
         const joinedRoom = await db.collection("lobby").findOne({ code });
         socket.join(code);
+        console.log(socket.id + ' joined room ' + code);
         io.to(code).emit("updateRoom", joinedRoom);
       } else {
+        console.log(socket.id + ' tried to join ' + code + 'but room is full.');
         socket.emit("roomFull", {
+          error: true,
           message: "The room you're entering is full.",
         });
       }
     } else {
-      socket.emit("noRoom", { message: "Room not found." });
+      console.log(socket.id + ' tried to join ' + code + ' but no such room.');
+      socket.emit("noRoom", {
+        error: true,
+        message: "Room not found.",
+      });
     }
   });
 
@@ -116,8 +126,8 @@ io.on("connection", (socket) => {
     await db.collection("lobby").deleteMany({});
   });
 
-  socket.on("disconnect", () => {
-    console.log(socket.id, " disconnected.");
+  socket.on("byebye", () => {
+    console.log(socket.id, "disconnected.");
     socket.disconnect();
   });
 });
