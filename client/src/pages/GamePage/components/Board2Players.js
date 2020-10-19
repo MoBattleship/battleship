@@ -87,8 +87,14 @@ function Board2Players({handleDisplay}) {
     }
     let isOverBoard
     if(position === 'horizontal'){
+      if (shipsCoordinate[0][1] < 1 ) {
+        return
+      } 
       isOverBoard = shipsCoordinate[shipsCoordinate.length - 1][1];
     } else {
+      if (shipsCoordinate[0][0] < 1) {
+        return
+      }
       isOverBoard = shipsCoordinate[shipsCoordinate.length - 1][0];
     }
     let isOverlapping = false
@@ -105,9 +111,9 @@ function Board2Players({handleDisplay}) {
       setShips({ ...ships, [name]: shipsCoordinate})
       handleDisplay({name, display: "none"})
     }
+    console.log(shipsCoordinate)
     setDrop(true)
   };
-  
   
 
 
