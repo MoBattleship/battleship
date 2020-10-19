@@ -9,10 +9,8 @@ function GamePage(props) {
   const [display, setDisplay] = useState('')
 
   const players = props?.location?.state?.playersData
-  console.log(players, "<<< ini props players")
   const code = props?.location?.state?.roomCode
 
-  console.log(props.location.state, "<<<<")
 
   useEffect(() => {
     
@@ -31,16 +29,7 @@ function GamePage(props) {
         }
       </div>
       <div style={{width: "60%"}}>
-        {
-          players?.length === 2 &&   <Board2Players handleDisplay={handleSetDisplay}/>
-        }
-        {
-          players?.length === 3 &&  <Board3Players handleDisplay={handleSetDisplay}/>
-        }
-        {
-          players?.length === 4 && <Board4Players handleDisplay={handleSetDisplay}/>
-        }
-        
+          <Board2Players handleDisplay={handleSetDisplay}/>
       </div>
     </div>
   )

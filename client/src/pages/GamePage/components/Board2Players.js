@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import socket from '../../../helpers/socket'
 
 function Board2Players({handleDisplay}) {
   const [ships, setShips] = useState({
@@ -9,9 +10,11 @@ function Board2Players({handleDisplay}) {
     destroyer: [],
   });
 
+
+  
   const [allCoor, setAllCoor] = useState([]);
   const [drop, setDrop] = useState(false);
-
+  
   // DUMMY BOARDS
   const [boards, setBoards] = useState([]);
   const alphabeth = "_ABCDEFGHIJKLMNO";
@@ -31,13 +34,13 @@ function Board2Players({handleDisplay}) {
     }
     generateBoard();
   }, []);
-
+  
   // HANDLE SHIPS PLACEMANET
   useEffect(() => {
     function generateShip() {
       let newBoards = boards;
       let shipsCoor = allCoor;
-
+      
       shipsCoor.forEach((ship) => {
         newBoards[ship[0]][ship[1]] = true;
       });
@@ -47,10 +50,27 @@ function Board2Players({handleDisplay}) {
     setDrop(false)
   }, [drop]);
 
+  useEffect(() => {
+    function ready() {
+      let temp = []
+      for (const ship in ships) {
+        temp.push({
+          name: ship,
+          length: ships[ship].length,
+          coordinates: ships[ship]
+        })
+      }
+      socket.emit("ready", { temp })
+    }
+
+    allCoor.length === 17 && ready()
+  }, [allCoor])
+  
   const onDragOver = (e, row, coll) => {
     e.preventDefault();
+    
   };
-
+  
   const onDrop = (e, row, coll) => {
     const size = e.dataTransfer.getData("size");
     const name = e.dataTransfer.getData("name");
@@ -71,6 +91,15 @@ function Board2Players({handleDisplay}) {
     } else {
       isOverBoard = shipsCoordinate[shipsCoordinate.length - 1][0];
     }
+    let isOverlapping = false
+    for (const ship of shipsCoordinate) {
+      for (const coor of allCoor) {
+        `${ship}` === `${coor}` && (isOverlapping = true)
+        if (isOverlapping) return
+      }
+    }
+
+    
     if (isOverBoard <= 15) {
       setAllCoor(allCoor.concat(shipsCoordinate))
       setShips({ ...ships, [name]: shipsCoordinate})
@@ -78,6 +107,9 @@ function Board2Players({handleDisplay}) {
     }
     setDrop(true)
   };
+  
+  
+
 
   return (
     <div>
