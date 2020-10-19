@@ -18,6 +18,34 @@ function PlayerCard({ player }) {
     console.log(playerColour, "ini playercolour");
   }
 
+  // function buttonFunctionality(selectedColour) {
+  //   if (playerColour === selectedColour) {
+  //     console.log('masuk if')
+  //     return (
+  //       <Button
+  //         key={index}
+  //         className="mr-1"
+  //         style={{ background: colour, height: "5px", width: "5px" }}
+  //         value={colour}
+  //         disabled={true}
+  //         onClick={() => playerColourGenerator(colour)}
+  //       ></Button>
+  //     )
+  //   } else {
+  //     console.log('masuk else')
+  //     return (
+  //       <Button
+  //         key={index}
+  //         className="mr-1"
+  //         style={{ background: colour, height: "5px", width: "5px" }}
+  //         value={colour}
+  //         disabled={false}
+  //         onClick={() => playerColourGenerator(colour)}
+  //       ></Button>
+  //     )
+  //   }
+  // }
+
   return (
     <div>
       <div className="col ml-5 mr-5 mt-3 mb-3">
@@ -37,15 +65,29 @@ function PlayerCard({ player }) {
             </div>
             <div className="row justify-content-left">
               {colours.map((colour, index) => {
-                return (
-                  <Button
-                    key={index}
-                    className="mr-1"
-                    style={{ background: colour, height: "5px", width: "5px" }}
-                    value={colour}
-                    onClick={() => playerColourGenerator(colour)}
+                if(colour === playerColour) {
+                  return (
+                    <Button
+                      key={index}
+                      className="mr-1"
+                      style={{ background: colour, height: "5px", width: "5px" }}
+                      value={colour}
+                      disabled={true}
+                      onClick={() => playerColourGenerator(colour)}
                   ></Button>
-                );
+                  );
+                } else {
+                  return (
+                    <Button
+                      key={index}
+                      className="mr-1"
+                      style={{ background: colour, height: "5px", width: "5px" }}
+                      value={colour}
+                      disabled={false}
+                      onClick={() => playerColourGenerator(colour)}
+                    ></Button>
+                  )
+                }
               })}
             </div>
           </Card.Body>
