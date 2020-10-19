@@ -113,8 +113,10 @@ module.exports = function(io) {
     socket.on('changeColor')
 
     // Start to board
-    socket.on('startGame', () => {
-      socket.to(Object.keys(socket.rooms)[1]).emit('toBoard')
+    socket.on('startGame', async () => {
+      const code = Object.keys(socket.rooms)[1]
+      const lobby = await db.collection('lobby').findOne({ code })
+      socket.to(code).emit('toBoard', lobby)
     })
 
     socket.on("nukeDatabase", async () => {
