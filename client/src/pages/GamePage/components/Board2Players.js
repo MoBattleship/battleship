@@ -1,86 +1,158 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from "react";
 
-function Board2Players() {
+function Board2Players({handleDisplay}) {
   const [ships, setShips] = useState({
     carrier: [],
     battleship: [],
     cruiser: [],
     submarine: [],
-    destroyer: []
-  })
+    destroyer: [],
+  });
+
+  const [allCoor, setAllCoor] = useState([]);
+  const [drop, setDrop] = useState(false);
 
   // DUMMY BOARDS
-  const [boards, setBoards] = useState([])
-  const alphabeth = "_ABCDEFGHIJKLMNO"
-  const numbers = ["",1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+  const [boards, setBoards] = useState([]);
+  const alphabeth = "_ABCDEFGHIJKLMNO";
+  const numbers = ["", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  
   useEffect(() => {
     function generateBoard() {
-      let boards = []
-      for(let i = 0; i < 16; i++){
-        let temp = []
-        for(let j = 0; j < 16; j++){
-          temp.push(0)
+      let boards = [];
+      for (let i = 0; i < 16; i++) {
+        let temp = [];
+        for (let j = 0; j < 16; j++) {
+          temp.push(false);
         }
-        boards.push(temp)
+        boards.push(temp);
       }
-      setBoards(boards)
+      setBoards(boards);
     }
-    generateBoard()
-  }, [])
+    generateBoard();
+  }, []);
+
+  // HANDLE SHIPS PLACEMANET
+  useEffect(() => {
+    function generateShip() {
+      let newBoards = boards;
+      let shipsCoor = allCoor;
+
+      shipsCoor.forEach((ship) => {
+        newBoards[ship[0]][ship[1]] = true;
+      });
+      setBoards(newBoards);
+    }
+    allCoor.length > 0 && generateShip();
+    setDrop(false)
+  }, [drop]);
 
   const onDragOver = (e, row, coll) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
   const onDrop = (e, row, coll) => {
-    const size = e.dataTransfer.getData("size")
-    const name = e.dataTransfer.getData("name")
-    const id = e.dataTransfer.getData("divId")
-    const position = e.dataTransfer.getData("position")
-    const shipsCoordinate = []
-
-    for(let i = 0; i < size; i++){
-      if (position === 'horizontal') {
-        shipsCoordinate.push([row, ((++coll) - id)])
+    const size = e.dataTransfer.getData("size");
+    const name = e.dataTransfer.getData("name");
+    const id = e.dataTransfer.getData("divId");
+    const position = e.dataTransfer.getData("position");
+    const shipsCoordinate = [];
+    
+    for (let i = 0; i < size; i++) {
+      if (position === "horizontal") {
+        shipsCoordinate.push([row, ++coll - id]);
       } else {
-        shipsCoordinate.push([((++row) - id), coll])
+        shipsCoordinate.push([++row - id, coll]);
       }
     }
-    const isOverBoard = shipsCoordinate[shipsCoordinate.length-1][1]
-    isOverBoard <= 15 && setShips({...ships, [name]: shipsCoordinate})
-  }
+    let isOverBoard
+    if(position === 'horizontal'){
+      isOverBoard = shipsCoordinate[shipsCoordinate.length - 1][1];
+    } else {
+      isOverBoard = shipsCoordinate[shipsCoordinate.length - 1][0];
+    }
+    if (isOverBoard <= 15) {
+      setAllCoor(allCoor.concat(shipsCoordinate))
+      setShips({ ...ships, [name]: shipsCoordinate})
+      handleDisplay({name, display: "none"})
+    }
+    setDrop(true)
+  };
 
   return (
     <div>
       <div className="container">
-        {
-          boards.map((row, rowIdx) => {
-            return <div key={rowIdx} className="d-flex flex-wrap" style={{width: "640px"}}>
-                {
-                  row.map((coll, collIdx) => {
-                    return (
-                      <div key={collIdx}>
-                        {
-                          rowIdx === 0 && collIdx !== 0 && <div key={collIdx} className="border border-white bg-dark text-white column align-items-center justify-content-center align-items-center" style={{backgroundColor: "#fff", width: "40px", height: "40px"}}>{alphabeth[collIdx]}</div>
-                        }
-                        {
-                          collIdx === 0 && <div key={collIdx} className="border border-white bg-dark text-white" style={{backgroundColor: "#fff", width: "40px", height: "40px"}}>{numbers[rowIdx]}</div>
-                        }
-                        {
-                          rowIdx !== 0 
-                          && collIdx !== 0 
-                          && <div onDrop={e => onDrop(e, rowIdx, collIdx)} onDragOver={(e) => onDragOver(e, rowIdx, collIdx)} key={collIdx} className="border border-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
-                        }
+        {boards.map((row, rowIdx) => {
+          return (
+            <div
+              key={rowIdx}
+              className="d-flex flex-wrap"
+              style={{ width: "640px" }}
+            >
+              {row.map((coll, collIdx) => {
+                return (
+                  <div key={collIdx}>
+                    {rowIdx === 0 && collIdx !== 0 && (
+                      <div
+                        key={collIdx}
+                        className="border border-white bg-dark text-white column align-items-center justify-content-center align-items-center"
+                        style={{
+                          backgroundColor: "#fff",
+                          width: "40px",
+                          height: "40px",
+                        }}
+                      >
+                        {alphabeth[collIdx]}
                       </div>
-                    )
-                  })
-                }
+                    )}
+                    {collIdx === 0 && (
+                      <div
+                        key={collIdx}
+                        className="border border-white bg-dark text-white"
+                        style={{
+                          backgroundColor: "#fff",
+                          width: "40px",
+                          height: "40px",
+                        }}
+                      >
+                        {numbers[rowIdx]}
+                      </div>
+                    )}
+                    {rowIdx !== 0 && collIdx !== 0 && !coll && (
+                      <div
+                        onDrop={(e) => onDrop(e, rowIdx, collIdx)}
+                        onDragOver={(e) => onDragOver(e, rowIdx, collIdx)}
+                        key={collIdx}
+                        className="border border-white"
+                        style={{
+                          backgroundColor: "#1B9CC6",
+                          width: "40px",
+                          height: "40px",
+                        }}
+                      ></div>
+                    )}
+                    {rowIdx !== 0 && collIdx !== 0 && coll && (
+                      <div
+                        onDrop={(e) => onDrop(e, rowIdx, collIdx)}
+                        onDragOver={(e) => onDragOver(e, rowIdx, collIdx)}
+                        key={collIdx}
+                        className="border border-white"
+                        style={{
+                          backgroundColor: "#4b5320",
+                          width: "40px",
+                          height: "40px",
+                        }}
+                      ></div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          })
-        }
+          );
+        })}
       </div>
     </div>
-  )
+  );
 }
 
-export default Board2Players
+export default Board2Players;
