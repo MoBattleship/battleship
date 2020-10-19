@@ -10,17 +10,7 @@ function Board2Players({handleDisplay}) {
     destroyer: [],
   });
 
-  const handleCoordinate = () => {
-    // let isFlag = false
-    // for (const ship in ships) {
-    //   if (ship.length === 0) {
-    //     isFlag = true
-    //   }
-    // }
-    // if (!isFlag) {
 
-    // }
-  }
   
   const [allCoor, setAllCoor] = useState([]);
   const [drop, setDrop] = useState(false);
@@ -70,7 +60,7 @@ function Board2Players({handleDisplay}) {
           coordinates: ships[ship]
         })
       }
-      socket.emit("ready")
+      socket.emit("ready", { temp })
     }
 
     allCoor.length === 17 && ready()
@@ -118,8 +108,6 @@ function Board2Players({handleDisplay}) {
     setDrop(true)
   };
   
-  // console.log(allCoor, "<<< allCoor")
-  // console.log(ships, "<<< ini ships")
   
 
 
