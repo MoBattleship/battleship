@@ -65,7 +65,7 @@ function PlayerComputer({ changeDisplay }) {
                 return (
                   <div
                     key={idx}
-                    onMouseEnter={(e) => onMouseEnter(e, 1)}
+                    onMouseEnter={(e) => onMouseEnter(e, idx+1)}
                     className="border border-white"
                     style={{
                       backgroundColor: "#4b5320 ",
