@@ -109,6 +109,14 @@ module.exports = function(io) {
       }
     });
   
+    // Color change handler
+    socket.on('changeColor')
+
+    // Start to board
+    socket.on('startGame', () => {
+      socket.to(Object.keys(socket.rooms)[1]).emit('toBoard')
+    })
+
     socket.on("nukeDatabase", async () => {
       await db.collection("lobby").deleteMany({});
     });
