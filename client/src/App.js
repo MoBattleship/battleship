@@ -14,7 +14,8 @@ import {
 //pages
 import HomePage from './pages/HomePage'
 import GamePage from './pages/GamePage/index'
-import LobbyPage from './pages/LobbyPage/index';
+import LobbyPage from './pages/LobbyPage/index'
+import EndGamePage from './pages/EndGamePage/index'
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route exact path="/" component={HomePage} />
           <Route path="/games" component={GamePage} />
           <Route path='/lobby' component={LobbyPage} />
+          <Route path='/endgame' component={EndGamePage} />
         </Switch>
       </div>
     </Router>
