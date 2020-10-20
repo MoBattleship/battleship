@@ -224,6 +224,7 @@ module.exports = function (io) {
     });
 
     socket.on("resolveAttacks", async (bombs) => {
+      console.log(socket.id + ' has sent their attacks.');
       let advanceFlag = false;
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
@@ -251,7 +252,10 @@ module.exports = function (io) {
         }
       });
 
+      console.log(JSON.stringify(attackers[code]), `THIS IS ATTACKERS`)
+      console.log(advanceFlag, `diluar advance flag`)
       if (advanceFlag) {
+        console.log(`di dalam advanflag`)
         lastBoard = lastBoard.map((boardOfSocket) => {
           attackers[code].forEach((attack) => {
             if (boardOfSocket.socketId === attack.socketId) {
@@ -263,7 +267,8 @@ module.exports = function (io) {
           return boardOfSocket;
         });
         io.to(code).emit('resolving')
-
+        console.log('Resolving for every hits');
+        
         // Check every players of any sunk ship
         lastBoard.forEach(player => {
           let {coordinates} = player

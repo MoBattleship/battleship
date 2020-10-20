@@ -17,6 +17,14 @@ function Start(props) {
   }
 
   useEffect(() => {
+    function sendAttackEnemyCoor() {
+      console.log(attackEnemy,`MASUK PAK EKO`)
+      socket.emit('resolveAttacks', attackEnemy)
+    } 
+    attackEnemy.length === totalEnemy && sendAttackEnemyCoor()
+  }, [attackEnemy])
+
+  useEffect(() => {
       socket.on("resolved", (data) => {
         console.log(data, `this is afrika`)
         // let players = data.filter(board => board.socketId === socket.id)
@@ -26,13 +34,6 @@ function Start(props) {
         // setEnemyData(enemy)
       })
   }, [])
-
-  useEffect(() => {
-    function sendAttackEnemyCoor() {
-      socket.emit('resolveAttacks', attackEnemy)
-    } 
-    attackEnemy.length === totalEnemy && sendAttackEnemyCoor()
-  }, [attackEnemy])
 
   return (
     <div>
