@@ -71,7 +71,7 @@ function LobbyPage(props) {
         </div>
         <div className="row justify-content-center">
           {playersData?.map((player, index) => {
-            return <PlayerCard player={player} playerColours={playersData} key={index} />;
+            return <PlayerCard player={player}  playerColours={playersData} key={index} />;
           })}
         </div>
         <Button hidden={hostStatus === "member"} onClick={handleStartGame} type="button-lg mt-3 mb-3" className="mr-3">Start Game</Button>
