@@ -36,7 +36,7 @@ function PlayerCard({ player, playerColours }) {
 
   function playerColourGenerator(selectedColour) {
     console.log(selectedColour, '=======INI selectedcolour')
-    socket.emit("changeColor", selectedColour)
+    socket.emit("changeColor", {selectedColour, socketId: player.socketId})
     // setPlayerColour(selectedColour);
     // console.log(playerColour, "ini playercolour");
   }
@@ -73,7 +73,7 @@ function PlayerCard({ player, playerColours }) {
     <div>
       <div className="col ml-5 mr-5 mt-3 mb-3">
         <Card style={{ width: "18rem" }}>
-          <h5 style={{ backgroundColor: player.color }}>Ready</h5>
+          <h5 style={{ backgroundColor: player.color }}>{player.socketId}</h5>
           <div className="justify-content-center">
             <Card.Img
               style={styles.image}
