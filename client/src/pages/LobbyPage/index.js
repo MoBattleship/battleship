@@ -57,11 +57,10 @@ function LobbyPage(props) {
   useEffect(() => {
     socket.on("updateRoom", (data) => {
       setPlayersData(data.players);
-      console.log(data.players, "<<< ini update");
-      console.log(playersData, "<< ini playersData")
       setRoomCode(data.code);
     });
   }, [playersData]);
+
   return (
     <div className="container mt-3">
       <h5>This is your roomcode: {roomCode}</h5>
@@ -72,7 +71,7 @@ function LobbyPage(props) {
         </div>
         <div className="row justify-content-center">
           {playersData?.map((player, index) => {
-            return <PlayerCard player={player} key={index} />;
+            return <PlayerCard player={player} playerColours={playersData} key={index} />;
           })}
         </div>
         <Button hidden={hostStatus === "member"} onClick={handleStartGame} type="button-lg mt-3 mb-3" className="mr-3">Start Game</Button>

@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react'
 
-import Board2Players from './components/Board2Players'
-import Board3Players from './components/Board3Players'
-import Board4Players from './components/Board4Players'
+import Preparation from './components/Preparation'
 import PlayerComputer from './components/PlayerComputer'
 
 function GamePage(props) {
@@ -11,15 +9,12 @@ function GamePage(props) {
   const players = props?.location?.state?.playersData
   const code = props?.location?.state?.roomCode
 
-
   useEffect(() => {
     
   }, [display])
   const handleSetDisplay = (data) => {
     setDisplay(data)
   }
-
-  
 
   return (
     <div className="row m-5 ">
@@ -29,7 +24,7 @@ function GamePage(props) {
         }
       </div>
       <div style={{width: "60%"}}>
-          <Board2Players handleDisplay={handleSetDisplay}/>
+          <Preparation handleDisplay={handleSetDisplay}/>
       </div>
     </div>
   )
