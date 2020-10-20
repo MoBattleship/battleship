@@ -288,7 +288,6 @@ module.exports = function (io) {
             }
           }
         )
-        
         io.to(code).emit('resolved', lastBoard)
         attackers[code] = [];
       }
