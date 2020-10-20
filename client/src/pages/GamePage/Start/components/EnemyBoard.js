@@ -53,7 +53,7 @@ function EnemyBoard({data, handleAttackEnemy}) {
 
   // Place Attacked
   useEffect(() => {
-    
+
   })
 
   // Place Kapal
@@ -80,8 +80,8 @@ function EnemyBoard({data, handleAttackEnemy}) {
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      setIsAttack(true)
-      setStyleBtn('')
+      // setIsAttack(true)
+      // setStyleBtn('')
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})

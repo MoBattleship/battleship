@@ -131,4 +131,29 @@ describe('Socket Tests', () => {
       })
     })
   })
+
+  describe('Attack test', () => {
+    const dumSocket1 = io('http://localhost:4000')
+    const dumSocket2 = io('http://localhost:4000')
+    before((done) => {
+      dumSocket1.once('updateRoom', (res) => {
+        dumSocket2.once('updateRoom', () => {
+          done()
+        })
+        dumSocket2.emit('join', { code: res.code, name: 'dummy2'})
+      })
+      dumSocket1.emit('host', { name: 'dummy1'})
+    })
+
+    after(function(done) {
+      dumSocket1.emit('nukeDatabase')
+      dumSocket2.emit('byebye')
+      dumSocket1.emit('byebye')
+      done()
+    })
+
+    it('Tes nyerang', (done) => {
+      dumSocket1.emit('ready',)
+    })
+  })
 })

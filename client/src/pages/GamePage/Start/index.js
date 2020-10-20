@@ -17,12 +17,13 @@ function Start(props) {
   }
 
   useEffect(() => {
-      socket.on("updateAttacks", (data) => {
-        let players = data.filter(board => board.socketId === socket.id)
-        let enemy = data.filter(board => board.socketId != socket.id)
-        setAllData(data)
-        setPlayerData(players)
-        setEnemyData(enemy)
+      socket.on("resolved", (data) => {
+        console.log(data, `this is afrika`)
+        // let players = data.filter(board => board.socketId === socket.id)
+        // let enemy = data.filter(board => board.socketId != socket.id)
+        // setAllData(data)
+        // setPlayerData(players)
+        // setEnemyData(enemy)
       })
   }, [])
 
@@ -33,11 +34,6 @@ function Start(props) {
     attackEnemy.length === totalEnemy && sendAttackEnemyCoor()
   }, [attackEnemy])
 
-  useEffect(() => {
-    socket.on("resolved", (res) => {
-      console.log(res, `THIS IS AMERICA`)
-    })
-  }, [])
   return (
     <div>
       <div>
