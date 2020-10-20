@@ -67,13 +67,7 @@ function EnemyBoard({data, handleAttackEnemy}) {
   useEffect(() => {
     function revealAttackTemp() {
       let newBoards = boards
-      attackCoordinateTemp.forEach(coor => {
-        newBoards[coor[0]][coor[1]] === 'atlantis' && (newBoards[coor[0]][coor[1]] = 'atlantis-reveal')
-        newBoards[coor[0]][coor[1]] === 'bomb' && (newBoards[coor[0]][coor[1]] = 'bomb-reveal')
-        newBoards[coor[0]][coor[1]] === 'power' && (newBoards[coor[0]][coor[1]] = 'power-reveal')
-        newBoards[coor[0]][coor[1]] === 'none' && (newBoards[coor[0]][coor[1]] = 'none-reveal')
-        newBoards[coor[0]][coor[1]] === 'ship' && (newBoards[coor[0]][coor[1]] = 'ship-reveal')
-      })
+      newBoards[attackCoordinateTemp[0]][attackCoordinateTemp[1]] = 'hit'
       setBoards(newBoards)
     }
     attackCoordinateTemp.length > 0 && revealAttackTemp()
@@ -81,15 +75,14 @@ function EnemyBoard({data, handleAttackEnemy}) {
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      // setIsAttack(true)
-      // setStyleBtn('')
+      setIsAttack(true)
+      setStyleBtn('')
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
-      setAttackCoordinateTemp([...attackCoordinateTemp, [row, coll]])
+      setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
     }
   }
 
-  console.log(boards)
   return (
     <div>
       <div className="container">
@@ -134,27 +127,7 @@ function EnemyBoard({data, handleAttackEnemy}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'atlantis-reveal' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}>🔱</div>
-                        }
-                        {
-                          rowIdx !== 0 
-                          && collIdx !== 0 
-                          && coll === 'bomb-reveal' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}>💣</div>
-                        }
-                        {
-                          rowIdx !== 0 
-                          && collIdx !== 0 
-                          && coll === 'power-reveal' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}>💥</div>
-                        }
-                        {
-                          rowIdx !== 0 
-                          && collIdx !== 0 
-                          && coll === 'ship-reveal' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{color: "black", backgroundColor: "yellow", width: "40px", height: "40px"}}>S</div>
-                        }
-                        {
-                          rowIdx !== 0 
-                          && collIdx !== 0 
-                          && coll === 'none-reveal' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx}  className={`border border-white ${styleBtn}`} style={{color: "red", backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}>X</div>
+                          && coll === 'hit' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "red", width: "40px", height: "40px"}}></div>
                         }
                       </div>
                     )
