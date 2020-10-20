@@ -1,5 +1,6 @@
 const db = require("../mongo");
 const { generateCode, generateCoordinate } = require("../helpers");
+let boards = [];
 
 module.exports = function (io) {
   io.on("connection", (socket) => {
@@ -114,70 +115,97 @@ module.exports = function (io) {
     });
 
     // Color change handler
-    // socket.on('changeColor', (color) => {
-    //   const code = Object.keys(socket.rooms)[1]
-    //   const socketId = socket.id
-    //   const lobby = await db.collection('lobby').findOneAndUpdate({ code }, {
-    //     $set: {
-
-    //     }
-    //   })
-    // })
+    socket.on("changeColor", async (color) => {
+      const code = Object.keys(socket.rooms)[1];
+      const socketId = socket.id;
+      const lobby = await db.collection("lobby").findOneAndUpdate(
+        { code, players: { socketId } },
+        {
+          $set: {
+            players: {
+              color
+            },
+          },
+        }
+      );
+      console.log(lobby);
+      
+    });
 
     // Start to board
     socket.on("startGame", async () => {
       const code = Object.keys(socket.rooms)[1];
-      const lobby = await db.collection("lobby").findOne({ code });
+      let lobby = await db.collection("lobby").findOne({ code });
+      console.log("Game in room", code, "is starting");
       socket.to(code).emit("toBoard", lobby);
     });
 
     // Save ships coordinates
     socket.on("ready", async ({ temp: payload }) => {
+      console.log(socket.id, "has placed their ships");
       let specials = [];
+      const code = Object.keys(socket.rooms)[1];
+      const lobby = await db.collection("lobby").findOne({ code });
 
       while (true) {
-        let generated = generateCoordinate()
-        let isBooked = false
+        let generated = generateCoordinate();
+        let isBooked = false;
 
         // cek kapal
-        for(ship of payload) {
-          ship.coordinates.forEach(coordinate => {
+        for (ship of payload) {
+          ship.coordinates.forEach((coordinate) => {
             if (`${generated}` === `${coordinate}`) {
-              isBooked = true
+              isBooked = true;
             }
-          })
+          });
         }
 
         if (isBooked) {
-          continue
+          continue;
         }
 
         // cek special yg lain
-        specials.forEach(coordinate => {
+        specials.forEach((coordinate) => {
           if (`${generated}` === `${coordinate}`) {
-            isBooked = true
+            isBooked = true;
           }
-        })
+        });
 
         if (isBooked) {
-          continue
+          continue;
         }
 
-        specials.push(generated)
+        specials.push(generated);
         if (specials.length === 4) {
-          break
+          break;
         }
       }
 
-      console.log('ini koordinat2nya');
-      console.log(specials);
-      payload.forEach(ship => {
-        console.log(ship.coordinates);
-      })
-
-      const coor = {
-        ships: payload,
+      const coordinates = {
+        socketId: socket.id,
+        coordinates: {
+          ships: payload,
+          bombCount: [specials[0], specials[1]],
+          bombPower: specials[2],
+          atlantis: specials[3],
+        },
       };
+
+      boards.push(coordinates);
+      console.log(boards.length, lobby.players.length);
+
+      if (boards.length === lobby.players.length) {
+        const startBoardLog = [boards];
+        await db.collection("lobby").updateOne(
+          { code },
+          {
+            $set: {
+              boardLogs: startBoardLog,
+            },
+          }
+        );
+        io.to(code).emit("allBoards", boards);
+      }
     });
 
     socket.on("nukeDatabase", async () => {
