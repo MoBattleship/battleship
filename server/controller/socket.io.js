@@ -93,6 +93,7 @@ module.exports = function (io) {
             }
           );
           const joinedRoom = await db.collection("lobby").findOne({ code });
+          // console.log(joinedRoom, '---------------------joinedRoom')
           socket.join(code);
           console.log(socket.id + " joined room " + code);
           io.to(code).emit("updateRoom", joinedRoom);
@@ -117,10 +118,10 @@ module.exports = function (io) {
     });
 
     // Color change handler
-    socket.on("changeColor", async (color) => {
-      console.log(color, 'colornya');
+    socket.on("changeColor", async ({selectedColour, socketId}) => {
+      console.log(selectedColour, socketId, 'colornya');
       const code = Object.keys(socket.rooms)[1];
-      const socketId = socket.id;
+      // const socketId = socket.id;
       await db.collection("lobby").updateOne(
         {
           $and: [
@@ -134,8 +135,11 @@ module.exports = function (io) {
         },
         {
           $set: {
-            "players.0.color": color,
+            "players.$.color": selectedColour,
           },
+        },
+        {
+          returnOriginal: false
         }
       );
       const lobby = await db.collection('lobby').findOne({ code })
