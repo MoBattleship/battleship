@@ -32,12 +32,12 @@ function PlayerCard({ player, playerColours }) {
   // console.log(player, 'ini player di card')
   // console.log(player.socketId, 'ini player.socketId')
   // console.log(socket.id, 'ini socket.id')
-  const [playerColour, setPlayerColour] = useState(player.color);
+  // const [playerColour, setPlayerColour] = useState(player.color);
 
   function playerColourGenerator(selectedColour) {
     console.log(selectedColour, '=======INI selectedcolour')
     socket.emit("changeColor", selectedColour)
-    setPlayerColour(selectedColour);
+    // setPlayerColour(selectedColour);
     // console.log(playerColour, "ini playercolour");
   }
 
@@ -54,19 +54,26 @@ function PlayerCard({ player, playerColours }) {
     // })
   }, [allPlayers])
 
-  useEffect(() => {
-    socket.on("updateRoom", (lobby) => {
-      console.log('--------------------1', lobby.players)
-      setAllPlayers(lobby.players)
-      // console.log(allPlayers, lobby, 'ini allPlayers')
-    })
-  }, [])
+  // useEffect(() => {
+  //   socket.on("updateRoom", (lobby) => {
+  //     console.log('--------------------1', lobby.players)
+  //     const color = lobby.players.filter(player => {
+  //       if (player.socketId === socket.id) {
+  //         return player.color
+  //       }
+  //     })
+  //     console.log(color, '==================ini color')
+  //     setPlayerColour(color[0].color) 
+  //     setAllPlayers(lobby.players)
+  //     // console.log(allPlayers, lobby, 'ini allPlayers')
+  //   })
+  // }, [])
   
   return (
     <div>
       <div className="col ml-5 mr-5 mt-3 mb-3">
         <Card style={{ width: "18rem" }}>
-          <h5 style={{ backgroundColor: playerColour }}>Ready</h5>
+          <h5 style={{ backgroundColor: player.color }}>Ready</h5>
           <div className="justify-content-center">
             <Card.Img
               style={styles.image}
@@ -83,7 +90,7 @@ function PlayerCard({ player, playerColours }) {
               </div>
               <div className="row justify-content-left">
                 {colours.map((colour, index) => {
-                  if(playerColours.map(pc => pc.color).includes(colour) || colour === playerColour) {
+                  if(playerColours.map(pc => pc.color).includes(colour) || colour === player.color) {
                     return (
                       <Button
                         key={index}
