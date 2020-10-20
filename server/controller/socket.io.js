@@ -1,6 +1,7 @@
 const db = require("../mongo");
 const { generateCode, generateCoordinate } = require("../helpers");
 let boards = [];
+let attackers = [];
 
 module.exports = function (io) {
   io.on("connection", (socket) => {
@@ -116,20 +117,28 @@ module.exports = function (io) {
 
     // Color change handler
     socket.on("changeColor", async (color) => {
+      console.log(color, "ini warna yg dipilih");
       const code = Object.keys(socket.rooms)[1];
       const socketId = socket.id;
-      const lobby = await db.collection("lobby").findOneAndUpdate(
-        { code, players: { socketId } },
+      const { value: lobby } = await db.collection("lobby").findOneAndUpdate(
+        {
+          $and: [
+            { code },
+            {
+              players: {
+                $elemMatch: { socketId },
+              },
+            },
+          ],
+        },
         {
           $set: {
-            players: {
-              color
-            },
+            "players.0.color": color,
           },
         }
       );
       console.log(lobby);
-      
+      io.to(code).emit("updateRoom", lobby);
     });
 
     // Start to board
@@ -188,6 +197,7 @@ module.exports = function (io) {
           bombCount: [specials[0], specials[1]],
           bombPower: specials[2],
           atlantis: specials[3],
+          attacked: [],
         },
       };
 
@@ -205,7 +215,16 @@ module.exports = function (io) {
           }
         );
         io.to(code).emit("allBoards", boards);
+        boards = [];
       }
+    });
+
+    socket.on("resolveAttacks", async (bombs) => {
+      const code = Object.keys(socket.rooms)[1];
+      const lobby = await db.collection("lobby").findOne({ code });
+      const latestBoard = lobby.boards[lobby.boards.length - 1];
+
+      const { attackedId, coordinate } = bombs;
     });
 
     socket.on("nukeDatabase", async () => {
