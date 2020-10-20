@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
-function EnemyBoard({data, handleAttackEnemy}) {
+function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.coordinates.forEach(el => {
@@ -12,15 +12,16 @@ function EnemyBoard({data, handleAttackEnemy}) {
   const atlantisCoordinate = data.coordinates.atlantis
   const plusBombCoordinate = data.coordinates.bombCount
   const plusPowerCoordinate = data.coordinates.bombPower
+  const attacked = data.coordinates.attacked
 
   const [isAttack, setIsAttack] = useState(false)
   const [styleBtn, setStyleBtn] = useState('btn')
   const [attackEnemy, setAttackEnemy] = useState({})
   const [attackCoordinateTemp, setAttackCoordinateTemp] = useState([])
-  
+
   // DUMMY BOARDS
   const [boards, setBoards] = useState([])
-  const [isBoardFilled, setIsBoardFilled] = useState(false)
+  const [isBoardFilled, setIsBoardFilled] = useState(attackFlag)
   const alphabeth = "_ABCDEFGHIJKLMNO"
   const numbers = ["",1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
@@ -53,8 +54,15 @@ function EnemyBoard({data, handleAttackEnemy}) {
 
   // Place Attacked
   useEffect(() => {
-
-  })
+    function placeAttack() {
+      let newBoard = JSON.parse(JSON.stringify(boards))
+      attacked.forEach(atkCoor => {
+        newBoard[0][1] = 'hit'
+      })
+      setBoards(newBoard)
+    }
+    attacked.length > 0 && placeAttack()
+  }, [attacked])
 
   // Place Kapal
   useEffect(() => {
@@ -76,7 +84,7 @@ function EnemyBoard({data, handleAttackEnemy}) {
       setBoards(newBoards)
     }
     attackCoordinateTemp.length > 0 && revealAttackTemp()
-  }, [attackCoordinateTemp][boards])
+  }, [attackCoordinateTemp, boards])
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
@@ -88,6 +96,7 @@ function EnemyBoard({data, handleAttackEnemy}) {
     }
   }
 
+  // console.log(boards)
   return (
     <div>
       <div className="container">

@@ -11,6 +11,7 @@ function Start(props) {
   const [enemyData, setEnemyData]  = useState(enemyTemp) 
   const totalEnemy = allData.length - 1
   const [attackEnemy, setAttackEnemy] = useState([])
+  const [attackFlag, setAttackFlag] = useState(false)
 
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor])
@@ -18,7 +19,6 @@ function Start(props) {
 
   useEffect(() => {
     function sendAttackEnemyCoor() {
-      console.log(attackEnemy,`MASUK PAK EKO`)
       socket.emit('resolveAttacks', attackEnemy)
     } 
     attackEnemy.length === totalEnemy && sendAttackEnemyCoor()
@@ -26,15 +26,15 @@ function Start(props) {
 
   useEffect(() => {
       socket.on("resolved", (data) => {
-        console.log(data, `this is afrika`)
-        // let players = data.filter(board => board.socketId === socket.id)
-        // let enemy = data.filter(board => board.socketId != socket.id)
-        // setAllData(data)
-        // setPlayerData(players)
-        // setEnemyData(enemy)
+        console.log(data)
+        let players = data.filter(board => board.socketId === socket.id)
+        let enemy = data.filter(board => board.socketId != socket.id)
+        setAllData(data)
+        setPlayerData(players)
+        setEnemyData(enemy)
+        setAttackFlag(true)
       })
   }, [])
-
   return (
     <div>
       <div>
@@ -43,7 +43,7 @@ function Start(props) {
       <div>
         {
           enemyData.map((enemy, idx) => {
-            return <EnemyBoard key={idx} handleAttackEnemy={handleAttackEnemy} data={enemy} />
+            return <EnemyBoard key={idx} attackFlag={attackFlag} handleAttackEnemy={handleAttackEnemy} data={enemy} />
           })
         }
       </div>
