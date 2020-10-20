@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import socket from '../../../helpers/socket'
+import socket from '../../../../helpers/socket'
+import {useHistory} from 'react-router-dom'
 
-function Board2Players({handleDisplay}) {
+function Preparation({handleDisplay}) {
+  const history = useHistory()
   const [ships, setShips] = useState({
     carrier: [],
     battleship: [],
@@ -9,8 +11,6 @@ function Board2Players({handleDisplay}) {
     submarine: [],
     destroyer: [],
   });
-
-
   
   const [allCoor, setAllCoor] = useState([]);
   const [drop, setDrop] = useState(false);
@@ -104,19 +104,20 @@ function Board2Players({handleDisplay}) {
         if (isOverlapping) return
       }
     }
-
     
     if (isOverBoard <= 15) {
       setAllCoor(allCoor.concat(shipsCoordinate))
       setShips({ ...ships, [name]: shipsCoordinate})
       handleDisplay({name, display: "none"})
     }
-    console.log(shipsCoordinate)
     setDrop(true)
   };
   
-
-
+  useEffect(() => {
+    socket.on("allBoards", (data) => {
+      history.push("/start", {data})
+    })
+  }, [])
   return (
     <div>
       <div className="container">
@@ -193,4 +194,4 @@ function Board2Players({handleDisplay}) {
   );
 }
 
-export default Board2Players;
+export default Preparation;
