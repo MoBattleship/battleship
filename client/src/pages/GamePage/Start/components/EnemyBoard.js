@@ -51,6 +51,11 @@ function EnemyBoard({data, handleAttackEnemy}) {
     generateBoard()
   }, [])
 
+  // Place Attacked
+  useEffect(() => {
+    
+  })
+
   // Place Kapal
   useEffect(() => {
     function placeShips(){

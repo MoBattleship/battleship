@@ -33,7 +33,11 @@ function Start(props) {
     attackEnemy.length === totalEnemy && sendAttackEnemyCoor()
   }, [attackEnemy])
 
-  console.log(attackEnemy, `ini attack enemy`)
+  useEffect(() => {
+    socket.on("resolved", (res) => {
+      console.log(res, `THIS IS AMERICA`)
+    })
+  }, [])
   return (
     <div>
       <div>
