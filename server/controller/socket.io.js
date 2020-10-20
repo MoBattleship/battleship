@@ -266,7 +266,7 @@ module.exports = function (io) {
           return boardOfSocket;
         });
         io.to(code).emit('resolving')
-        console.log('Resolving for every hits');
+        console.log('Resolving for every hits...');
 
         // Check every players of any sunk ship
         lastBoard.forEach(player => {
@@ -292,6 +292,8 @@ module.exports = function (io) {
             }
           }
         )
+        
+        console.log('Hits resolved. Sending to client...');
         io.to(code).emit('resolved', lastBoard)
         attackers[code].forEach(player => {
           player.underFire = []

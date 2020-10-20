@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from "react";
+import carrier1 from '../../../../assets/carrier/carrier1.png'
+import carrier2 from '../../../../assets/carrier/carrier2.png'
+import carrier3 from '../../../../assets/carrier/carrier3.png'
+import carrier4 from '../../../../assets/carrier/carrier4.png'
+import carrier5 from '../../../../assets/carrier/carrier5.png'
+import battleship1 from '../../../../assets/battleship/battleship1.png'
+import battleship2 from '../../../../assets/battleship/battleship2.png'
+import battleship3 from '../../../../assets/battleship/battleship3.png'
+import battleship4 from '../../../../assets/battleship/battleship4.png'
+import cruiser1 from '../../../../assets/cruiser/cruiser1.png'
+import cruiser2 from '../../../../assets/cruiser/cruiser2.png'
+import cruiser3 from '../../../../assets/cruiser/cruiser3.png'
+import submarine1 from '../../../../assets/submarine/submarine1.png'
+import submarine2 from '../../../../assets/submarine/submarine2.png'
+import submarine3 from '../../../../assets/submarine/submarine3.png'
+import destroyer1 from '../../../../assets/destroyer/destroyer1.png'
+import destroyer2 from '../../../../assets/destroyer/destroyer2.png'
 
 function PlayerComputer({ changeDisplay }) {
+  const carriers = [carrier1, carrier2, carrier3, carrier4, carrier5]
+  const battleships = [battleship1, battleship2, battleship3, battleship4]
+  const submarines = [submarine1, submarine2, submarine3]
+  const cruisers = [cruiser1, cruiser2, cruiser3]
+  const destroyers = [destroyer1, destroyer2]
   const [divId, setDivId] = useState(0);
   const [position, setPosition] = useState("row");
   const [display, setDisplay] = useState("");
@@ -66,9 +88,12 @@ function PlayerComputer({ changeDisplay }) {
                   <div
                     key={idx}
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
-                    className="border border-white"
+                    // className="border border-white"
                     style={{
-                      backgroundColor: "#4b5320 ",
+                      backgroundImage: `url(${carriers[idx]})`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
                       width: "40px",
                       height: "40px",
                     }}
@@ -95,9 +120,12 @@ function PlayerComputer({ changeDisplay }) {
                   <div
                     key={idx}
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
-                    className="border border-white"
+                    // className="border border-white"
                     style={{
-                      backgroundColor: "#4b5320 ",
+                      backgroundImage: `url(${battleships[idx]})`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
                       width: "40px",
                       height: "40px",
                     }}
@@ -124,9 +152,12 @@ function PlayerComputer({ changeDisplay }) {
                   <div
                     key={idx}
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
-                    className="border border-white"
+                    // className="border border-white"
                     style={{
-                      backgroundColor: "#4b5320 ",
+                      backgroundImage: `url(${cruisers[idx]})`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
                       width: "40px",
                       height: "40px",
                     }}
@@ -153,9 +184,12 @@ function PlayerComputer({ changeDisplay }) {
                   <div
                     key={idx}
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
-                    className="border border-white"
+                    // className="border border-white"
                     style={{
-                      backgroundColor: "#4b5320 ",
+                      backgroundImage: `url(${submarines[idx]})`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
                       width: "40px",
                       height: "40px",
                     }}
@@ -182,9 +216,12 @@ function PlayerComputer({ changeDisplay }) {
                   <div
                     key={idx}
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
-                    className="border border-white"
+                    // className="border border-white"
                     style={{
-                      backgroundColor: "#4b5320 ",
+                      backgroundImage: `url(${destroyers[idx]})`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
                       width: "40px",
                       height: "40px",
                     }}
