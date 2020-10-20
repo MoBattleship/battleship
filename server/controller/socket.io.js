@@ -118,10 +118,10 @@ module.exports = function (io) {
     });
 
     // Color change handler
-    socket.on("changeColor", async (color) => {
-      console.log(color, 'colornya');
+    socket.on("changeColor", async ({selectedColour, socketId}) => {
+      console.log(selectedColour, socketId, 'colornya');
       const code = Object.keys(socket.rooms)[1];
-      const socketId = socket.id;
+      // const socketId = socket.id;
       await db.collection("lobby").updateOne(
         {
           $and: [
@@ -135,7 +135,7 @@ module.exports = function (io) {
         },
         {
           $set: {
-            "players.0.color": color,
+            "players.$.color": selectedColour,
           },
         },
         {
