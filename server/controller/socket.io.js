@@ -2,6 +2,7 @@ const db = require("../mongo");
 const { generateCode, generateCoordinate } = require("../helpers");
 let boards = [];
 let attackers = [];
+let attackCoordinates = [];
 
 module.exports = function (io) {
   io.on("connection", (socket) => {
@@ -117,10 +118,10 @@ module.exports = function (io) {
 
     // Color change handler
     socket.on("changeColor", async (color) => {
-      console.log(color, "ini warna yg dipilih");
+      console.log(color, 'colornya');
       const code = Object.keys(socket.rooms)[1];
       const socketId = socket.id;
-      const { value: lobby } = await db.collection("lobby").findOneAndUpdate(
+      await db.collection("lobby").updateOne(
         {
           $and: [
             { code },
@@ -137,7 +138,7 @@ module.exports = function (io) {
           },
         }
       );
-      console.log(lobby);
+      const lobby = await db.collection('lobby').findOne({ code })
       io.to(code).emit("updateRoom", lobby);
     });
 
@@ -202,9 +203,10 @@ module.exports = function (io) {
       };
 
       boards.push(coordinates);
-      console.log(boards.length, lobby.players.length);
+      // console.log(boards.length, lobby.players.length);
 
       if (boards.length === lobby.players.length) {
+        console.log('All players have placed their ships');
         const startBoardLog = [boards];
         await db.collection("lobby").updateOne(
           { code },
@@ -222,9 +224,31 @@ module.exports = function (io) {
     socket.on("resolveAttacks", async (bombs) => {
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
-      const latestBoard = lobby.boards[lobby.boards.length - 1];
+      let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
 
-      const { attackedId, coordinate } = bombs;
+      // attackCoordinates = [
+      //   [
+      //     {
+      //       socketId: ...,
+
+      //     }
+      //   ]
+      // ]
+
+      // attackers.push(socket.id)
+      attackCoordinates.push(bombs)
+      if (attackCoordinates.length === lobby.players.length) {
+        lastBoard = lastBoard.map(socketBoard => {
+          attackCoordinates.forEach(attackCoordinate => {
+            attackCoordinate.forEach(attack => {
+              if (attack.socketId === socketBoard.socketId) {
+                socketBoard.coordinates.attacked
+              }
+            })
+          })
+        })
+        boards.push(lastBoard)
+      }
     });
 
     socket.on("nukeDatabase", async () => {
