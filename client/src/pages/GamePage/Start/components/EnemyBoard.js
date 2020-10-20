@@ -91,27 +91,27 @@ function EnemyBoard({data, handleAttackEnemy}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'atlantis' && <div onClick={() => handleAttack()} key={collIdx} className="border border-white text-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'atlantis' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'bomb' && <div onClick={() => handleAttack()} key={collIdx} className="border border-white text-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'bomb' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'power' && <div onClick={() => handleAttack()} key={collIdx} className="border border-white text-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'power' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'ship' && <div onClick={() => handleAttack()} key={collIdx} className="border border-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'ship' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'none' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'none' && <div key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                       </div>
                     )
