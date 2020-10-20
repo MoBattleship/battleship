@@ -33,8 +33,7 @@ function Start(props) {
     attackEnemy.length === totalEnemy && sendAttackEnemyCoor()
   }, [attackEnemy])
 
-  console.log(attackEnemy, "<<< enemy attack!")
-
+  console.log(attackEnemy, `ini attack enemy`)
   return (
     <div>
       <div>
