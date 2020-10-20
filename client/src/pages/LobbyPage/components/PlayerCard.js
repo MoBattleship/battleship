@@ -3,7 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import socket from "../../../helpers/socket";
 
 function PlayerCard({ player, playerColours }) {
-  // const [checker, setChecker] =useState(false)
+  const [checker, setChecker] =useState(false)
   const colours = [
     "#f9ca24",
     "#e84118",
@@ -28,8 +28,8 @@ function PlayerCard({ player, playerColours }) {
   // //   }
   // // }
   // // console.log(newColour, 'ini newColour')
-  // console.log(playerColours, 'ini playerColours')
-  // console.log(player, 'ini player di card')
+  console.log(playerColours, 'ini playerColours')
+  console.log(player, 'ini player di card')
   // console.log(player.socketId, 'ini player.socketId')
   // console.log(socket.id, 'ini socket.id')
   const [playerColour, setPlayerColour] = useState(player.color);
@@ -40,6 +40,22 @@ function PlayerCard({ player, playerColours }) {
     console.log(playerColour, "ini playercolour");
   }
 
+  // useEffect(() => {
+  //   playerColours.forEach(pColour => {
+  //         console.log(pColour.color, 'ini pColour')
+  //         console.log(playerColour, 'ini colour')
+  //         if(playerColour === pColour.color) {
+  //           console.log('ini return true')
+  //           setChecker(false)
+  //           return checker
+  //         } else {
+  //           console.log('ini return false')
+  //           setChecker(true)
+  //           return checker
+  //         }
+  //       })
+  // }, [playerColour])
+
   // function otherPlayerColourChecker(colour) {
   //   playerColours.forEach(pColour => {
   //     console.log(pColour.color, 'ini pColour')
@@ -47,9 +63,11 @@ function PlayerCard({ player, playerColours }) {
   //     if(colour === pColour.color) {
   //       console.log('ini return true')
   //       setChecker(true)
+  //       return checker
   //     } else {
   //       console.log('ini return false')
   //       setChecker(false)
+  //       return checker
   //     }
   //   })
   // }
@@ -75,7 +93,7 @@ function PlayerCard({ player, playerColours }) {
               </div>
               <div className="row justify-content-left">
                 {colours.map((colour, index) => {
-                  if(colour === playerColour) {
+                  if(playerColours.map(pc => pc.color).includes(colour)) {
                     return (
                       <Button
                         key={index}

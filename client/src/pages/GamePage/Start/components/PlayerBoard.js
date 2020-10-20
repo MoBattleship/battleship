@@ -78,22 +78,22 @@ function PlayerBoard({data}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'atlantis' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "blue", width: "40px", height: "40px"}}>A</div>
+                        && coll === 'atlantis' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "blue", width: "40px", height: "40px"}}>🔱</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'bomb' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "black", width: "40px", height: "40px"}}>B</div>
+                          && coll === 'bomb' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "black", width: "40px", height: "40px"}}>💣</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'power' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}>P</div>
+                          && coll === 'power' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}>💥</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'ship' && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>P</div>
+                          && coll === 'ship' && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>S</div>
                         }
                         {
                           rowIdx !== 0 
