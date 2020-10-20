@@ -57,11 +57,10 @@ function LobbyPage(props) {
   useEffect(() => {
     socket.on("updateRoom", (data) => {
       setPlayersData(data.players);
-      console.log(data.players, "<<< ini update");
-      console.log(playersData, "<< ini playersData")
       setRoomCode(data.code);
     });
   }, [playersData]);
+
   return (
     <div className="container mt-3">
       <h5>This is your roomcode: {roomCode}</h5>

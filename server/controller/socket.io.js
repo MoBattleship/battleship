@@ -205,6 +205,7 @@ module.exports = function (io) {
           }
         );
         io.to(code).emit("allBoards", boards);
+        boards = []
       }
     });
 
