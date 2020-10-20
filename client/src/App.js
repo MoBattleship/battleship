@@ -13,9 +13,10 @@ import {
 
 //pages
 import HomePage from './pages/HomePage'
-import GamePage from './pages/GamePage/index'
+import GamePage from './pages/GamePage/Preparation/index'
 import LobbyPage from './pages/LobbyPage/index'
 import EndGamePage from './pages/EndGamePage/index'
+import Start from './pages/GamePage/Start/index'
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/games" component={GamePage} />
           <Route path='/lobby' component={LobbyPage} />
           <Route path='/endgame' component={EndGamePage} />
+          <Route path='/start' component={Start} />
         </Switch>
       </div>
     </Router>
