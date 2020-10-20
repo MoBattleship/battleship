@@ -234,11 +234,6 @@ module.exports = function (io) {
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
 
-      if (!attackers[code]) {
-        attackers[code] = [];
-      }
-      attackers[code].push({ socketId: socket.id, underFire: [] });
-
       attackers[code].forEach((attack) => {
         bombs.forEach((bomb) => {
           if (attack.socketId === bomb.socketId) {
@@ -268,7 +263,7 @@ module.exports = function (io) {
           return boardOfSocket;
         });
         io.to(code).emit('resolving')
-        console.log('Resolving for every hits');
+        console.log('Resolving for every hits...');
 
         // Check every players of any sunk ship
         lastBoard.forEach(player => {
@@ -295,6 +290,7 @@ module.exports = function (io) {
           }
         )
         
+        console.log('Hits resolved. Sending to client...');
         io.to(code).emit('resolved', lastBoard)
         attackers[code].forEach(player => {
           player.underFire = []
