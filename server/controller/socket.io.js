@@ -194,6 +194,14 @@ module.exports = function (io) {
         }
       }
 
+      payload.forEach(ship => {
+        ship.isAlive = true
+      })
+
+      payload.forEach(ship => {
+        console.log(ship, 'kocchi');
+      })
+
       const coordinates = {
         socketId: socket.id,
         coordinates: {
@@ -270,7 +278,6 @@ module.exports = function (io) {
           let {coordinates} = player
           let {attacked, ships} = coordinates
           ships.forEach(ship => {
-            ship.isAlive = true
             ship.coordinates.forEach(coordinate => {
               attacked.forEach(point => {
                 if (`${point}` === `${coordinate}`) {
@@ -280,6 +287,9 @@ module.exports = function (io) {
             })
           })
         })
+
+        // Check for any features hit
+
 
         await db.collection('lobby').updateOne(
           { code },
