@@ -93,7 +93,7 @@ function PlayerBoard({data}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'ship' && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>P</div>
+                          && coll === 'ship' && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>S</div>
                         }
                         {
                           rowIdx !== 0 

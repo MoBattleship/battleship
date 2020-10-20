@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
 function EnemyBoard({data, handleAttackEnemy}) {
-  // console.log(data)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.coordinates.forEach(el => {
@@ -17,6 +16,7 @@ function EnemyBoard({data, handleAttackEnemy}) {
   const [isAttack, setIsAttack] = useState(false)
   const [styleBtn, setStyleBtn] = useState('btn')
   const [attackEnemy, setAttackEnemy] = useState({})
+  const [attackCoordinateTemp, setAttackCoordinateTemp] = useState([])
   
   // DUMMY BOARDS
   const [boards, setBoards] = useState([])
@@ -63,12 +63,23 @@ function EnemyBoard({data, handleAttackEnemy}) {
     boards.length > 1 && placeShips()
   }, [isBoardFilled])
 
+  // Reveal Attack Temp
+  useEffect(() => {
+    function revealAttackTemp() {
+      let newBoards = boards
+      newBoards[attackCoordinateTemp[0]][attackCoordinateTemp[1]] = 'hit'
+      setBoards(newBoards)
+    }
+    attackCoordinateTemp.length > 0 && revealAttackTemp()
+  }, [attackCoordinateTemp][boards])
+
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
       setIsAttack(true)
       setStyleBtn('')
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
-      handleAttackEnemy({[socket]: [row, coll]})
+      setAttackCoordinateTemp([row, coll])
+      handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
     }
   }
 
@@ -106,12 +117,17 @@ function EnemyBoard({data, handleAttackEnemy}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'ship' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'ship' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{color: "red", backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'none' && <div key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll === 'none' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                        }
+                        {
+                          rowIdx !== 0 
+                          && collIdx !== 0 
+                          && coll === 'hit' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "red", width: "40px", height: "40px"}}></div>
                         }
                       </div>
                     )
