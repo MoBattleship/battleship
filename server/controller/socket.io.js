@@ -93,7 +93,6 @@ module.exports = function (io) {
             }
           );
           const joinedRoom = await db.collection("lobby").findOne({ code });
-          // console.log(joinedRoom, '---------------------joinedRoom')
           socket.join(code);
           console.log(socket.id + " joined room " + code);
           io.to(code).emit("updateRoom", joinedRoom);
@@ -118,10 +117,10 @@ module.exports = function (io) {
     });
 
     // Color change handler
-    socket.on("changeColor", async ({selectedColour, socketId}) => {
-      console.log(selectedColour, socketId, 'colornya');
+    socket.on("changeColor", async (color) => {
+      console.log(color, 'colornya');
       const code = Object.keys(socket.rooms)[1];
-      // const socketId = socket.id;
+      const socketId = socket.id;
       await db.collection("lobby").updateOne(
         {
           $and: [
@@ -135,11 +134,8 @@ module.exports = function (io) {
         },
         {
           $set: {
-            "players.$.color": selectedColour,
+            "players.0.color": color,
           },
-        },
-        {
-          returnOriginal: false
         }
       );
       const lobby = await db.collection('lobby').findOne({ code })
@@ -234,14 +230,17 @@ module.exports = function (io) {
 
       attackers.forEach(attack => {
         bombs.forEach(bomb => {
-          if (attack.socketId === bomb.socketId) {
-            attack.underFire.push(bomb.coordinate)
+          if (attack.socketId === Object.keys(bomb)[0]) {
+            attack.underFire.push(bomb[Object.keys(bomb)[0]])
           }
         })
       })
       
       if (attackers.length === lobby.players.length) {
         console.log(attackers);
+        lastBoard = lastBoard.map(boardOfSocket => {
+          attackers.forEach()
+        })
         // await db.collection('lobby').updateOne(
         //   {code},
         //   {
