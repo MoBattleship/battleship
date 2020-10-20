@@ -4,7 +4,7 @@ import PlayerBoard from './components/PlayerBoard'
 import EnemyBoard from './components/EnemyBoard'
 
 function Start(props) {
-  const allData = props.location.state.data
+  const [allData, setAllData] = useState(props.location.state.data)
   const playerData = allData.filter(board => board.socketId === socket.id)
   const enemyData  = allData.filter(board => board.socketId != socket.id) 
   const totalEnemy = allData.length - 1
