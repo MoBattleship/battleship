@@ -1,7 +1,7 @@
 const db = require("../mongo");
 const { generateCode, generateCoordinate } = require("../helpers");
 let boards = [];
-let attackers = [];
+let attackers = []
 let attackCoordinates = [];
 
 module.exports = function (io) {
@@ -156,7 +156,7 @@ module.exports = function (io) {
       let specials = [];
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
-
+      
       while (true) {
         let generated = generateCoordinate();
         let isBooked = false;
@@ -203,6 +203,7 @@ module.exports = function (io) {
       };
 
       boards.push(coordinates);
+      attackers.push({ socketId: socket.id, underFire: [] } )
       // console.log(boards.length, lobby.players.length);
 
       if (boards.length === lobby.players.length) {
@@ -222,32 +223,29 @@ module.exports = function (io) {
     });
 
     socket.on("resolveAttacks", async (bombs) => {
+      console.log(bombs);
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
 
-      // attackCoordinates = [
-      //   [
-      //     {
-      //       socketId: ...,
-
-      //     }
-      //   ]
-      // ]
-
-      // attackers.push(socket.id)
-      attackCoordinates.push(bombs)
-      if (attackCoordinates.length === lobby.players.length) {
-        lastBoard = lastBoard.map(socketBoard => {
-          attackCoordinates.forEach(attackCoordinate => {
-            attackCoordinate.forEach(attack => {
-              if (attack.socketId === socketBoard.socketId) {
-                socketBoard.coordinates.attacked
-              }
-            })
-          })
+      attackers.forEach(attack => {
+        bombs.forEach(bomb => {
+          if (attack.socketId === bomb.socketId) {
+            attack.underFire.push(bomb.coordinate)
+          }
         })
-        boards.push(lastBoard)
+      })
+      
+      if (attackers.length === lobby.players.length) {
+        console.log(attackers);
+        // await db.collection('lobby').updateOne(
+        //   {code},
+        //   {
+        //     $push: {
+        //       boardLogs: lastBoard
+        //     }
+        //   }
+        // )
       }
     });
 
