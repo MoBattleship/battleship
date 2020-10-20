@@ -1,7 +1,7 @@
 const db = require("../mongo");
 const { generateCode, generateCoordinate } = require("../helpers");
 let boards = [];
-let attackers = []
+let attackers = {};
 let attackCoordinates = [];
 
 module.exports = function (io) {
@@ -117,10 +117,10 @@ module.exports = function (io) {
     });
 
     // Color change handler
-    socket.on("changeColor", async (color) => {
-      console.log(color, 'colornya');
-      const code = Object.keys(socket.rooms)[1];
+    socket.on("changeColor", async ({ selectedColour }) => {
       const socketId = socket.id;
+      const code = Object.keys(socket.rooms)[1];
+      // const socketId = socket.id;
       await db.collection("lobby").updateOne(
         {
           $and: [
@@ -134,11 +134,14 @@ module.exports = function (io) {
         },
         {
           $set: {
-            "players.0.color": color,
+            "players.$.color": selectedColour,
           },
+        },
+        {
+          returnOriginal: false,
         }
       );
-      const lobby = await db.collection('lobby').findOne({ code })
+      const lobby = await db.collection("lobby").findOne({ code });
       io.to(code).emit("updateRoom", lobby);
     });
 
@@ -156,7 +159,7 @@ module.exports = function (io) {
       let specials = [];
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
-      
+
       while (true) {
         let generated = generateCoordinate();
         let isBooked = false;
@@ -203,11 +206,11 @@ module.exports = function (io) {
       };
 
       boards.push(coordinates);
-      attackers.push({ socketId: socket.id, underFire: [] } )
-      // console.log(boards.length, lobby.players.length);
+      attackers[code] = []
+      attackers[code].push()
 
       if (boards.length === lobby.players.length) {
-        console.log('All players have placed their ships');
+        console.log("All players have placed their ships");
         const startBoardLog = [boards];
         await db.collection("lobby").updateOne(
           { code },
@@ -223,32 +226,33 @@ module.exports = function (io) {
     });
 
     socket.on("resolveAttacks", async (bombs) => {
-      console.log(bombs);
+      console.log(bombs, "ajkshc");
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
 
-      attackers.forEach(attack => {
-        bombs.forEach(bomb => {
+      attackers.forEach((attack) => {
+        bombs.forEach((bomb) => {
           if (attack.socketId === Object.keys(bomb)[0]) {
-            attack.underFire.push(bomb[Object.keys(bomb)[0]])
+            attack.underFire.push(bomb[Object.keys(bomb)[0]]);
           }
-        })
-      })
-      
+        });
+      });
+
+
       if (attackers.length === lobby.players.length) {
-        console.log(attackers);
-        lastBoard = lastBoard.map(boardOfSocket => {
-          attackers.forEach()
-        })
-        // await db.collection('lobby').updateOne(
-        //   {code},
-        //   {
-        //     $push: {
-        //       boardLogs: lastBoard
-        //     }
-        //   }
-        // )
+        console.log(attackers, "ini attackers yang udah semua");
+        lastBoard = lastBoard.map((boardOfSocket) => {
+          attackers.forEach((attack) => {
+            if (boardOfSocket.socketId === attack.socketId) {
+              attack.underFire.forEach((coor) => {
+                boardOfSocket.coordinates.attacked.push(coor);
+              });
+            }
+          });
+          return boardOfSocket;
+        });
+        console.log(lastBoard, "ini last board nya");
       }
     });
 
