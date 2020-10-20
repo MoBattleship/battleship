@@ -3,6 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import socket from "../../../helpers/socket";
 
 function PlayerCard({ player, playerColours }) {
+  // const [checker, setChecker] =useState(false)
   const colours = [
     "#f9ca24",
     "#e84118",
@@ -12,31 +13,46 @@ function PlayerCard({ player, playerColours }) {
     "#fff200",
     "#f8a5c2",
   ];
-  let newColour = []
-  // playerColours = playerColours.forEach(color => {
-  //   console.log(colours.includes(color.color), 'ini color.color')
+  // let newColour = []
+  // playerColours = playerColours.map(color => {
+  //   // console.log(colours.includes(color.color), 'ini color.color')
   //   if(!colours.includes(color.color)) {
   //     newColour.push(colours[colours.indexOf(color.color)])
   //   }
   // })
-  for (let i = 0; i < colours.length; i++) {
-    for (let j = 0; j < playerColours.length; j++) {
-      if (colours[i] !== playerColours[j]) {
-        newColour.push(colours[i])
-      }
-    }
-  }
-  console.log(newColour, 'ini newColour')
-  console.log(playerColours, 'ini playerColours')
-  console.log(player, 'ini player di card')
-  console.log(player.socketId, 'ini player.socketId')
-  console.log(socket.id, 'ini socket.id')
+  // // for (let i = 0; i < colours.length; i++) {
+  // //   for (let j = 0; j < playerColours.length; j++) {
+  // //     if (colours[i] !== playerColours[j]) {
+  // //       newColour.push(colours[i])
+  // //     }
+  // //   }
+  // // }
+  // // console.log(newColour, 'ini newColour')
+  // console.log(playerColours, 'ini playerColours')
+  // console.log(player, 'ini player di card')
+  // console.log(player.socketId, 'ini player.socketId')
+  // console.log(socket.id, 'ini socket.id')
   const [playerColour, setPlayerColour] = useState(player.color);
 
   function playerColourGenerator(selectedColour) {
+    socket.emit("changeColor", selectedColour)
     setPlayerColour(selectedColour);
     console.log(playerColour, "ini playercolour");
   }
+
+  // function otherPlayerColourChecker(colour) {
+  //   playerColours.forEach(pColour => {
+  //     console.log(pColour.color, 'ini pColour')
+  //     console.log(colour, 'ini colour')
+  //     if(colour === pColour.color) {
+  //       console.log('ini return true')
+  //       setChecker(true)
+  //     } else {
+  //       console.log('ini return false')
+  //       setChecker(false)
+  //     }
+  //   })
+  // }
 
   return (
     <div>
