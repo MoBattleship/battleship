@@ -3,7 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import socket from "../../../helpers/socket";
 
 function PlayerCard({ player, playerColours }) {
-  const [checker, setChecker] =useState(false)
+  const [allPlayers, setAllPlayers] =useState([])
   const colours = [
     "#f9ca24",
     "#e84118",
@@ -28,50 +28,40 @@ function PlayerCard({ player, playerColours }) {
   // //   }
   // // }
   // // console.log(newColour, 'ini newColour')
-  console.log(playerColours, 'ini playerColours')
-  console.log(player, 'ini player di card')
+  // console.log(playerColours, 'ini playerColours')
+  // console.log(player, 'ini player di card')
   // console.log(player.socketId, 'ini player.socketId')
   // console.log(socket.id, 'ini socket.id')
   const [playerColour, setPlayerColour] = useState(player.color);
 
   function playerColourGenerator(selectedColour) {
+    console.log(selectedColour, '=======INI selectedcolour')
     socket.emit("changeColor", selectedColour)
     setPlayerColour(selectedColour);
-    console.log(playerColour, "ini playercolour");
+    // console.log(playerColour, "ini playercolour");
   }
 
-  // useEffect(() => {
-  //   playerColours.forEach(pColour => {
-  //         console.log(pColour.color, 'ini pColour')
-  //         console.log(playerColour, 'ini colour')
-  //         if(playerColour === pColour.color) {
-  //           console.log('ini return true')
-  //           setChecker(false)
-  //           return checker
-  //         } else {
-  //           console.log('ini return false')
-  //           setChecker(true)
-  //           return checker
-  //         }
-  //       })
-  // }, [playerColour])
+  useEffect(() => {
+    console.log('--------------------2', player.socketId, allPlayers)
+    const p = allPlayers.filter(currentPlayer => currentPlayer.socketId === player.socketId)[0]
+    console.log(p, '=====================ini p')
+    // setPlayerColour(p.color)
+    // setPlayerColour(p.color)
+    // allPlayers.forEach(playerData => {
+    //   if(player.socketId === playerData.socketId) {
+    //     setPlayerColour(playerData.color)
+    //   }
+    // })
+  }, [allPlayers])
 
-  // function otherPlayerColourChecker(colour) {
-  //   playerColours.forEach(pColour => {
-  //     console.log(pColour.color, 'ini pColour')
-  //     console.log(colour, 'ini colour')
-  //     if(colour === pColour.color) {
-  //       console.log('ini return true')
-  //       setChecker(true)
-  //       return checker
-  //     } else {
-  //       console.log('ini return false')
-  //       setChecker(false)
-  //       return checker
-  //     }
-  //   })
-  // }
-
+  useEffect(() => {
+    socket.on("updateRoom", (lobby) => {
+      console.log('--------------------1', lobby.players)
+      setAllPlayers(lobby.players)
+      // console.log(allPlayers, lobby, 'ini allPlayers')
+    })
+  }, [])
+  
   return (
     <div>
       <div className="col ml-5 mr-5 mt-3 mb-3">
@@ -93,7 +83,7 @@ function PlayerCard({ player, playerColours }) {
               </div>
               <div className="row justify-content-left">
                 {colours.map((colour, index) => {
-                  if(playerColours.map(pc => pc.color).includes(colour)) {
+                  if(playerColours.map(pc => pc.color).includes(colour) || colour === playerColour) {
                     return (
                       <Button
                         key={index}

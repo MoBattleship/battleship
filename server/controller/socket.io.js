@@ -92,6 +92,7 @@ module.exports = function (io) {
             }
           );
           const joinedRoom = await db.collection("lobby").findOne({ code });
+          // console.log(joinedRoom, '---------------------joinedRoom')
           socket.join(code);
           console.log(socket.id + " joined room " + code);
           io.to(code).emit("updateRoom", joinedRoom);
@@ -135,6 +136,9 @@ module.exports = function (io) {
           $set: {
             "players.0.color": color,
           },
+        },
+        {
+          returnOriginal: false
         }
       );
       console.log(lobby);
