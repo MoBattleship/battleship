@@ -17,12 +17,6 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
   const [plusPowerCoordinate, _plusPowerCoordinate] = useState(data.coordinates.bombPower)
   const attacked = data.coordinates?.attacked
 
-
-  // console.log(data.coordinates?.attacked[0]?.coordinate, `attacked`)
-  // useEffect(() => {
-  //   setAttacked(data.coordinates.attacked)
-  // }, [data])
-
   let isAttack = attackFlag
   let styleBtn = setBtn
   const [attackEnemy, setAttackEnemy] = useState({})

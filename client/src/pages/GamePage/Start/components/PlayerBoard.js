@@ -70,7 +70,7 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
       setBoards(newBoard)
     }
     attacked.length > 0 && placeAttack()
-  }, [])
+  }, [data])
 
   // Place Kapal
   useEffect(() => {
@@ -86,7 +86,7 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
     // console.log(boards.length, `ini boards length`)
     // console.log(isBoardFilled, `ini isboardfilled`)
     boards.length > 1 && placeShips()
-  }, [isBoardFilled])
+  }, [isBoardFilled, data])
   console.log(isBoardFilled)
   return (
     <div>

@@ -1,10 +1,12 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
+import {useHistory} from 'react-router-dom'
 import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
 import { Chat, addResponseMessage } from 'react-chat-popup'
 let count = 0
 function Start(props) {
+  const history = useHistory()
   // let [count, setCount] = useState(0)
   const [allData, setAllData] = useState(props.location.state.data);
   let playersTemp = allData.filter((board) => board.socketId === socket.id);
@@ -61,6 +63,11 @@ function Start(props) {
       setStyleBtn('btn')
       setIsBoardFilled(false)
     });
+
+    socket.on("winner", (data) => {
+      console.log(data, `ini data winner`)
+      history.push("/endgame", {winner: data[0]})
+    })
   }, []);
   return (
     <div>
@@ -73,9 +80,6 @@ function Start(props) {
           console.log(count)
           return (
             <EnemyBoard
-            // key={Number(new Date()) + count}
-            // key={count}
-            // key={idx}
             key={enemy.socketId}
               attackFlag={attackFlag}
               handleAttackEnemy={handleAttackEnemy}
