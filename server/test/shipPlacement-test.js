@@ -56,6 +56,8 @@ describe("Leave tests", () => {
     ]
     dumSocket2.once('allBoards', (res) => {
       console.log(res, 'ini resnya');
+      expect(res).to.have.lengthOf(2, 'Boards length received should be 2')
+      // expect(res.)
       done()
     })
     dumSocket1.emit('ready', { temp: dummyBoard })
