@@ -2,11 +2,14 @@ import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
 function PlayerBoard({data}) {
-  console.log(data)
+  console.log(data, `ini data player board`)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
-    ship.coordinates.forEach(el => {
-      allShipsCoordinate.push(el)
+    ship.isAlive && ship.coordinates.forEach(el => {
+      allShipsCoordinate.push([el, true])
+    })
+    !ship.isAlive && ship.coordinates.forEach(el => {
+      allShipsCoordinate.push([el, false])
     })
   })
   
@@ -29,16 +32,16 @@ function PlayerBoard({data}) {
         let temp = []
         for(let j = 0; j < 16; j++){
           // Place atlantis
-          if(i === atlantisCoordinate[0] && j === atlantisCoordinate[1]) temp.push('atlantis')
+          if(i === atlantisCoordinate[0] && j === atlantisCoordinate[1]) temp.push(['atlantis'])
           
           // Place Plus Bomb
-          else if(i === plusBombCoordinate[0][0] && j === plusBombCoordinate[0][1]) temp.push('bomb')
-          else if(i === plusBombCoordinate[1][0] && j === plusBombCoordinate[1][1]) temp.push('bomb')
+          else if(i === plusBombCoordinate[0][0] && j === plusBombCoordinate[0][1]) temp.push(['bomb'])
+          else if(i === plusBombCoordinate[1][0] && j === plusBombCoordinate[1][1]) temp.push(['bomb'])
           
           // Place Plus Power
-          else if(i === plusPowerCoordinate[0] && j === plusPowerCoordinate[1]) temp.push('power')
+          else if(i === plusPowerCoordinate[0] && j === plusPowerCoordinate[1]) temp.push(['power'])
 
-          else temp.push('none')
+          else temp.push(['none'])
         }
         boards.push(temp)
       }
@@ -53,7 +56,7 @@ function PlayerBoard({data}) {
     function placeShips(){
       let newBoard = JSON.parse(JSON.stringify(boards))
       allShipsCoordinate.forEach((coor, i) => {
-        newBoard[coor[0]][coor[1]] = 'ship'
+        newBoard[coor[0][0]][coor[0][1]] = ['ship', coor[1]]
       })
       setBoards(newBoard)
     }
@@ -78,27 +81,32 @@ function PlayerBoard({data}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                        && coll === 'atlantis' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "blue", width: "40px", height: "40px"}}>🔱</div>
+                        && coll[0] === 'atlantis' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "blue", width: "40px", height: "40px"}}>🔱</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'bomb' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "black", width: "40px", height: "40px"}}>💣</div>
+                          && coll[0] === 'bomb' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "black", width: "40px", height: "40px"}}>💣</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'power' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}>💥</div>
+                          && coll[0] === 'power' && <div key={collIdx} className="border border-white text-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}>💥</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'ship' && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>S</div>
+                          && coll[0] === 'ship' && coll[1] && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>S</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll === 'none' && <div key={collIdx} className="border border-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                          && coll[0] === 'ship' && !coll[1] && <div key={collIdx} className="border border-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}>S</div>
+                        }
+                        {
+                          rowIdx !== 0 
+                          && collIdx !== 0 
+                          && coll[0] === 'none' && <div key={collIdx} className="border border-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
                         }
                       </div>
                     )

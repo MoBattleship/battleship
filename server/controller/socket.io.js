@@ -194,6 +194,14 @@ module.exports = function (io) {
         }
       }
 
+      payload.forEach(ship => {
+        ship.isAlive = true
+      })
+
+      payload.forEach(ship => {
+        console.log(ship, 'kocchi');
+      })
+
       const coordinates = {
         socketId: socket.id,
         coordinates: {
@@ -242,10 +250,12 @@ module.exports = function (io) {
         });
       });
 
-      attackers[code].forEach((socketDamage, index) => {
+      const playersBoard = attackers[code]
+      console.log(attackers[code], `ini attackers code`)
+      playersBoard.forEach((board, index) => {
         if (
-          socketDamage.underFire.length === 1 &&
-          index === attackers[code].length - 1
+          board.underFire.length > 0 &&
+          index === playersBoard.length - 1
         ) {
           advanceFlag = true;
         }
@@ -273,7 +283,6 @@ module.exports = function (io) {
           let {coordinates} = player
           let {attacked, ships} = coordinates
           ships.forEach(ship => {
-            ship.isAlive = true
             ship.coordinates.forEach(coordinate => {
               attacked.forEach(point => {
                 if (`${point}` === `${coordinate}`) {
@@ -283,6 +292,9 @@ module.exports = function (io) {
             })
           })
         })
+
+        // Check for any features hit
+
 
         await db.collection('lobby').updateOne(
           { code },
