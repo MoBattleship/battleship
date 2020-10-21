@@ -2,6 +2,7 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
+import { Chat, addResponseMessage } from 'react-chat-popup'
 
 function Start(props) {
   // let [count, setCount] = useState(0)
@@ -18,6 +19,24 @@ function Start(props) {
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor]);
   };
+
+  const handleNewUserMessage = (newMessage) => {
+    socket.emit("chatMessage", { socketId: socket.id, message: newMessage })
+  }
+
+  useEffect(() => {
+    socket.on("chatMessage", (data) => {
+      addResponseMessage(`${data.socketId} \r\n
+      ${data.message}`)
+    })
+  }, [])
+
+
+  useEffect(() => {
+    socket.on("announcement", (data) => {
+      addResponseMessage(data)
+    })
+  }, [])
 
   useEffect(() => {
     function sendAttackEnemyCoor() {
@@ -56,6 +75,13 @@ function Start(props) {
             />
           );
         })}
+      </div>
+      <div>
+        <Chat 
+          senderPlaceHolder="Type your message here..."
+          title="Chatbox"
+          handleNewUserMessage={handleNewUserMessage}
+        />
       </div>
     </div>
   );

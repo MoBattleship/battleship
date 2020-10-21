@@ -148,10 +148,17 @@ function HomePage() {
             >
               <Modal.Header closeButton>
                 <Modal.Title id="example-modal-sizes-title-lg">
-                  Large Modal
+                  How To Play
                 </Modal.Title>
               </Modal.Header>
-              <Modal.Body>Guidenya disini gaes</Modal.Body>
+              <Modal.Body style={{ fontSize: "30px" }}>
+                <p>- Place all of your ships by dragging it from the port on the left side of the screen to the grid according to its size. </p>
+                <p>- Fire to your opponents' board and hit their ship or Specials as follows:</p>
+                <p>- 💣  You will attack twice!</p>
+                <p>- 💥 Your fire power will be increased!</p>
+                <p>- 🔱  Careful on this on. You hit it, you anger Poseidon~</p>
+                <p>- Be the last one standing and be the Marine King!</p>
+              </Modal.Body>
           </Modal>
           </div>
         </div>
