@@ -194,16 +194,21 @@ module.exports = function (io) {
         }
       }
 
-      payload.forEach(ship => {
-        ship.isAlive = true
-      })
+      payload.forEach((ship) => {
+        ship.isAlive = true;
+      });
 
-      payload.forEach(ship => {
-        console.log(ship, 'kocchi');
-      })
+      payload.forEach((ship) => {
+        console.log(ship, "kocchi");
+      });
 
       const coordinates = {
         socketId: socket.id,
+        activePowers: {
+          bombCount: 1,
+          power: false,
+        },
+        isLose: false,
         coordinates: {
           ships: payload,
           bombCount: [specials[0], specials[1]],
@@ -236,7 +241,7 @@ module.exports = function (io) {
     });
 
     socket.on("resolveAttacks", async (bombs) => {
-      console.log(socket.id + ' has sent their attacks.');
+      console.log(socket.id + " has sent their attacks.");
       let advanceFlag = false;
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
@@ -245,14 +250,17 @@ module.exports = function (io) {
       attackers[code].forEach((attack) => {
         bombs.forEach((bomb) => {
           if (attack.socketId === bomb.socketId) {
-            attack.underFire.push(bomb.coordinate);
+            attack.underFire.push({
+              from: socket.id,
+              coordinate: bomb.coordinate,
+            });
           }
         });
       });
 
       attackers[code].forEach((socketDamage, index) => {
         if (
-          socketDamage.underFire.length === 1 &&
+          socketDamage.underFire.length > 0 &&
           index === attackers[code].length - 1
         ) {
           advanceFlag = true;
@@ -260,6 +268,8 @@ module.exports = function (io) {
       });
 
       if (advanceFlag) {
+        io.to(code).emit("resolving");
+
         lastBoard = lastBoard.map((boardOfSocket) => {
           attackers[code].forEach((attack) => {
             if (boardOfSocket.socketId === attack.socketId) {
@@ -270,40 +280,69 @@ module.exports = function (io) {
           });
           return boardOfSocket;
         });
-        io.to(code).emit('resolving')
-        console.log('Resolving for every hits...');
+        console.log("Resolving for every hits...");
 
-        // Check every players of any sunk ship
-        lastBoard.forEach(player => {
-          let {coordinates} = player
-          let {attacked, ships} = coordinates
-          ships.forEach(ship => {
-            ship.coordinates.forEach(coordinate => {
-              attacked.forEach(point => {
-                if (`${point}` === `${coordinate}`) {
-                  ship.isAlive = false
+        // Check every players of any sunk ship and special hits
+        lastBoard.forEach((player) => {
+          let { coordinates, activePowers, isLose } = player;
+          let { attacked, ships, bombCount, bombPower, atlantis } = coordinates;
+          attacked.forEach((point) => {
+            ships.forEach((ship) => {
+              ship.coordinates.forEach((coordinate) => {
+                if (`${point.coordinate}` === `${coordinate}`) {
+                  ship.isAlive = false;
                 }
-              })
-            })
-          })
-        })
+              });
+            });
+
+            // Check Bomb Count
+            bombCount.forEach((bc) => {
+              if (`${point.coordinate}` === `${bc}`) {
+                lastBoard.forEach((receiver) => {
+                  if (receiver.socketId === point.from) {
+                    receiver.activePowers.bombCount += 1;
+                  }
+                });
+              }
+            });
+
+            // Check Power
+            if (`${point.coordinate}` === `${bombPower}`) {
+              lastBoard.forEach((receiver) => {
+                if (receiver.socketId === point.from) {
+                  receiver.activePowers.bombPower = true;
+                }
+              });
+            }
+
+            if (`${point.coordinate}` === `${atlantis}`) {
+              lastBoard.forEach((receiver) => {
+                if (receiver.socketId === point.from) {
+                  receiver.isLose = true;
+                  io.to(code).emit("atlantisHit", {
+                    socketId: receiver.socketId,
+                  });
+                }
+              });
+            }
+          });
+        });
 
         // Check for any features hit
 
-
-        await db.collection('lobby').updateOne(
+        await db.collection("lobby").updateOne(
           { code },
           {
             $push: {
-              boardLogs: lastBoard
-            }
+              boardLogs: lastBoard,
+            },
           }
-        )
-        
-        console.log('Hits resolved. Sending to client...');
-        io.to(code).emit('resolved', lastBoard)
-        attackers[code].forEach(player => {
-          player.underFire = []
+        );
+
+        console.log("Hits resolved. Sending to client...");
+        io.to(code).emit("resolved", lastBoard);
+        attackers[code].forEach((player) => {
+          player.underFire = [];
         });
       }
     });
