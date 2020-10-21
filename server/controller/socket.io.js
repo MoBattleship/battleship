@@ -271,19 +271,15 @@ module.exports = function (io) {
         });
       });
 
-      const playersBoard = attackers[code]
-      console.log(attackers[code], `ini attackers code`)
-      playersBoard.forEach((board, index) => {
+      attackers[code].forEach((socketDamage, index) => {
         if (
-          board.underFire.length > 0 &&
+          socketDamage.underFire.length > 0 &&
           index === attackers[code].length - 1
         ) {
           advanceFlag = true;
         }
       });
 
-      console.log(JSON.stringify(attackers[code]), `THIS IS ATTACKERS`)
-      console.log(advanceFlag, `diluar advance flag`)
       if (advanceFlag) {
         io.to(code).emit("resolving");
 
