@@ -54,7 +54,6 @@ describe("Ship Placement Tests", () => {
       }
     ]
     dumSocket2.once('allBoards', (res) => {
-      console.log(res, 'ini resnya');
       expect(res).to.have.lengthOf(2, 'Boards length received should be 2')
       const sampleRes = res[0]
       expect(sampleRes.name).to.be.a('string', 'Name should be a string')

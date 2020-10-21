@@ -2,7 +2,6 @@ const db = require("../mongo");
 const { generateCode, generateCoordinate } = require("../helpers");
 let boards = [];
 let attackers = {};
-let attackCoordinates = [];
 
 module.exports = function (io) {
   io.on("connection", (socket) => {
@@ -225,9 +224,12 @@ module.exports = function (io) {
 
       boards.push(coordinates);
       if (!attackers[code]) {
-        attackers[code] = [];
+        attackers[code] = {
+          hasAttacked: 0,
+          defendants: []
+        };
       }
-      attackers[code].push({ socketId: socket.id, underFire: [] });
+      attackers[code].defendants.push({ socketId: socket.id, underFire: [] });
 
       if (boards.length === lobby.players.length) {
         console.log("All players have placed their ships");
@@ -251,7 +253,6 @@ module.exports = function (io) {
     // Resolving each attacks
     socket.on("resolveAttacks", async (bombs) => {
       console.log(socket.id + " has sent their attacks.");
-      let advanceFlag = false;
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
@@ -261,7 +262,8 @@ module.exports = function (io) {
         .to(code)
         .emit("announcement", `${name} has sent their attacks.`);
 
-      attackers[code].forEach((attack) => {
+      attackers[code].hasAttacked += 1
+      attackers[code].defendants.forEach((attack) => {
         bombs.forEach((bomb) => {
           if (attack.socketId === bomb.socketId) {
             attack.underFire.push({
@@ -272,20 +274,13 @@ module.exports = function (io) {
         });
       });
 
-      attackers[code].forEach((socketDamage, index) => {
-        if (
-          socketDamage.underFire.length > 0 &&
-          index === attackers[code].length - 1
-        ) {
-          advanceFlag = true;
-        }
-      });
+      const playerCount = lastBoard.length
 
-      if (advanceFlag) {
+      if (attackers[code].hasAttacked === playerCount) {
         io.to(code).emit("resolving");
 
         lastBoard = lastBoard.map((boardOfSocket) => {
-          attackers[code].forEach((attack) => {
+          attackers[code].defendants.forEach((attack) => {
             if (boardOfSocket.socketId === attack.socketId) {
               attack.underFire.forEach((coor) => {
                 boardOfSocket.coordinates.attacked.push(coor);
@@ -367,7 +362,7 @@ module.exports = function (io) {
 
         console.log("Hits resolved. Sending to client...");
         io.to(code).emit("resolved", lastBoard);
-        attackers[code].forEach((player) => {
+        attackers[code].defendants.forEach((player) => {
           player.underFire = [];
         });
       }
