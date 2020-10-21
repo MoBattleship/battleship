@@ -50,26 +50,26 @@ module.exports = function (io) {
       const code = Object.keys(socket.rooms)[1];
       const id = socket.id;
       const room = await db.collection("lobby").findOne({ code });
-      if (!room) {
-        console.log("that");
-      } else if (room.players.length === 1) {
-        await db.collection("lobby").deleteOne({ code });
-        socket.leave(code);
-      } else {
-        await db.collection("lobby").updateOne(
-          { code },
-          {
-            $pull: {
-              players: {
-                socketId: id,
+      if (room) {
+        if (room.players.length === 1) {
+          await db.collection("lobby").deleteOne({ code });
+          socket.leave(code);
+        } else {
+          await db.collection("lobby").updateOne(
+            { code },
+            {
+              $pull: {
+                players: {
+                  socketId: id,
+                },
               },
-            },
-          }
-        );
-        const newRoom = await db.collection("lobby").findOne({ code });
-        socket.leave(code);
-        console.log(socket.id + " left room " + code);
-        io.to(code).emit("updateRoom", newRoom);
+            }
+          );
+          const newRoom = await db.collection("lobby").findOne({ code });
+          socket.leave(code);
+          console.log(socket.id + " left room " + code);
+          io.to(code).emit("updateRoom", newRoom);
+        }
       }
     });
 
@@ -194,16 +194,26 @@ module.exports = function (io) {
         }
       }
 
-      payload.forEach(ship => {
-        ship.isAlive = true
-      })
+      const [name] = lobby.players.filter(
+        (player) => player.socketId === socket.id
+      );
 
-      payload.forEach(ship => {
-        console.log(ship, 'kocchi');
-      })
+      socket
+        .to(code)
+        .emit("announcement", `${name} has placed their ships`);
+
+      payload.forEach((ship) => {
+        ship.isAlive = true;
+      });
 
       const coordinates = {
         socketId: socket.id,
+        name: name,
+        activePowers: {
+          bombCount: 1,
+          power: false,
+        },
+        isLose: false,
         coordinates: {
           ships: payload,
           bombCount: [specials[0], specials[1]],
@@ -221,6 +231,9 @@ module.exports = function (io) {
 
       if (boards.length === lobby.players.length) {
         console.log("All players have placed their ships");
+        socket
+          .to(code)
+          .emit("announcement", "All players have placed their ships");
         const startBoardLog = [boards];
         await db.collection("lobby").updateOne(
           { code },
@@ -235,17 +248,25 @@ module.exports = function (io) {
       }
     });
 
+    // Resolving each attacks
     socket.on("resolveAttacks", async (bombs) => {
-      console.log(socket.id + ' has sent their attacks.');
+      console.log(socket.id + " has sent their attacks.");
       let advanceFlag = false;
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
+      const [name] = lastBoard.filter(player => player.socketId === socket.id)
+      socket
+        .to(code)
+        .emit("announcement", `${name} has sent their attacks.`);
 
       attackers[code].forEach((attack) => {
         bombs.forEach((bomb) => {
           if (attack.socketId === bomb.socketId) {
-            attack.underFire.push(bomb.coordinate);
+            attack.underFire.push({
+              from: socket.id,
+              coordinate: bomb.coordinate,
+            });
           }
         });
       });
@@ -254,8 +275,8 @@ module.exports = function (io) {
       console.log(attackers[code], `ini attackers code`)
       playersBoard.forEach((board, index) => {
         if (
-          board.underFire.length > 0 &&
-          index === playersBoard.length - 1
+          socketDamage.underFire.length > 0 &&
+          index === attackers[code].length - 1
         ) {
           advanceFlag = true;
         }
@@ -264,7 +285,8 @@ module.exports = function (io) {
       console.log(JSON.stringify(attackers[code]), `THIS IS ATTACKERS`)
       console.log(advanceFlag, `diluar advance flag`)
       if (advanceFlag) {
-        console.log(`di dalam advanflag`)
+        io.to(code).emit("resolving");
+
         lastBoard = lastBoard.map((boardOfSocket) => {
           attackers[code].forEach((attack) => {
             if (boardOfSocket.socketId === attack.socketId) {
@@ -275,43 +297,92 @@ module.exports = function (io) {
           });
           return boardOfSocket;
         });
-        io.to(code).emit('resolving')
-        console.log('Resolving for every hits...');
+        console.log("Resolving for every hits...");
 
-        // Check every players of any sunk ship
-        lastBoard.forEach(player => {
-          let {coordinates} = player
-          let {attacked, ships} = coordinates
-          ships.forEach(ship => {
-            ship.coordinates.forEach(coordinate => {
-              attacked.forEach(point => {
-                if (`${point}` === `${coordinate}`) {
-                  ship.isAlive = false
+        // Check every players of any sunk ship and special hits
+        lastBoard.forEach((player) => {
+          let { coordinates } = player;
+          let { attacked, ships, bombCount, bombPower, atlantis } = coordinates;
+
+          // Check bomb hit
+          attacked.forEach((point) => {
+            ships.forEach((ship) => {
+              ship.coordinates.forEach((coordinate) => {
+                if (`${point.coordinate}` === `${coordinate}`) {
+                  ship.isAlive = false;
                 }
-              })
-            })
-          })
-        })
+              });
+            });
 
-        // Check for any features hit
+            // Check Bomb Count
+            bombCount.forEach((bc) => {
+              if (`${point.coordinate}` === `${bc}`) {
+                lastBoard.forEach((receiver) => {
+                  if (receiver.socketId === point.from) {
+                    receiver.activePowers.bombCount += 1;
+                  }
+                });
+              }
+            });
 
+            // Check Power
+            if (`${point.coordinate}` === `${bombPower}`) {
+              lastBoard.forEach((receiver) => {
+                if (receiver.socketId === point.from) {
+                  receiver.activePowers.bombPower = true;
+                }
+              });
+            }
 
-        await db.collection('lobby').updateOne(
+            if (`${point.coordinate}` === `${atlantis}`) {
+              lastBoard.forEach((receiver) => {
+                if (receiver.socketId === point.from) {
+                  receiver.isLose = true;
+                  io.to(code).emit("atlantisHit", {
+                    socketId: receiver.socketId,
+                  });
+                }
+              });
+            }
+          });
+        });
+
+        await db.collection("lobby").updateOne(
           { code },
           {
             $push: {
-              boardLogs: lastBoard
-            }
+              boardLogs: lastBoard,
+            },
           }
-        )
-        
-        console.log('Hits resolved. Sending to client...');
-        io.to(code).emit('resolved', lastBoard)
-        attackers[code].forEach(player => {
-          player.underFire = []
+        );
+
+        console.log("Hits resolved. Sending to client...");
+        io.to(code).emit("resolved", lastBoard);
+        attackers[code].forEach((player) => {
+          player.underFire = [];
         });
       }
     });
+
+    // CHATBOX
+    // Send message
+    socket.on("chatMessage", (data) => {
+      socket
+        .to(Object.keys(socket.rooms)[1])
+        .broadcast.emit("chatMessage", data);
+    });
+
+    // Check typing
+    socket.on("typing", (data) => {
+      socket.to(Object.keys(socket.rooms)[1]).broadcast.emit("typing", data);
+    });
+
+    // Check stop typing
+    socket.on("stopTyping", () => {
+      socket.to(Object.keys(socket.rooms)[1]).broadcast.emit("stopTyping");
+    });
+
+    // For testing purpose
 
     socket.on("nukeDatabase", async () => {
       await db.collection("lobby").deleteMany({});
