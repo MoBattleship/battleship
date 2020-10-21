@@ -195,6 +195,8 @@ module.exports = function (io) {
         }
       }
 
+      const [name] = lobby.players.filter(player => player.socketId === socket.id)
+
       payload.forEach((ship) => {
         ship.isAlive = true;
       });
@@ -205,6 +207,7 @@ module.exports = function (io) {
 
       const coordinates = {
         socketId: socket.id,
+        name: name,
         activePowers: {
           bombCount: 1,
           power: false,
