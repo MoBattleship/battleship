@@ -274,7 +274,9 @@ module.exports = function (io) {
         });
       });
 
-      const playerCount = lastBoard.length;
+      // Check loser
+      const lastBoardCount = lastBoard.filter(player => player.isLose === false);
+      const playerCount = lastBoardCount.length
 
       if (attackers[code].hasAttacked === playerCount) {
         io.to(code).emit("resolving");
