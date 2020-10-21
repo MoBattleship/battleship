@@ -9,7 +9,7 @@ describe("Leave tests", () => {
   before(function (done) {
     dumSocket1.once('updateRoom', (res) => {
       code = res.code
-      dumSocket2.on('updateRoom', (res) => {
+      dumSocket2.once('updateRoom', (res) => {
         dumSocket1.emit('startGame')
         console.log('game is starting!');
         done()
@@ -24,5 +24,17 @@ describe("Leave tests", () => {
     dumSocket2.emit('byebye')
     dumSocket1.emit('byebye')
     done()
+  })
+
+  it('Successful placing', function(done) {
+    let dummyBoard = [
+      {
+        shipName: ''
+      }
+    ]
+    dumSocket2.once('allBoards', (res) => {
+      done()
+    })
+    dumSocket1.emit('ready', )
   })
 })

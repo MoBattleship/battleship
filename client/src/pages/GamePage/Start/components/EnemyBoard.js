@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
 function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
-  console.log(data, `ini data dari enemy board`)
+  // console.log(data, `ini data dari enemy board`)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach(el => {
@@ -13,14 +13,21 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
     })
   })
   
-  const atlantisCoordinate = data.coordinates.atlantis
-  const plusBombCoordinate = data.coordinates.bombCount
-  const plusPowerCoordinate = data.coordinates.bombPower
-  const [attacked, setAttacked] = useState(data.coordinates.attacked)
+  // console.log(allShipsCoordinate, `ini all shipcoordinate`)
+  
+  const [atlantisCoordinate, _atlantisCoordinate] = useState(data.coordinates.atlantis)
+  const [plusBombCoordinate, _plusBombCoordinate] = useState(data.coordinates.bombCount)
+  const [plusPowerCoordinate, _plusPowerCoordinate] = useState(data.coordinates.bombPower)
+  const [attacked, setAttacked] = useState(data.coordinates?.attacked[0]?.coordinate)
 
-  useEffect(() => {
-    setAttacked(data.coordinates.attacked)
-  }, [data])
+  // console.log(atlantisCoordinate, `ini all atlantisCoordinate`)
+  // console.log(plusBombCoordinate, `ini all plusBombCoordinate`)
+  // console.log(plusPowerCoordinate, `ini all plusPowerCoordinate`)
+
+  // console.log(data.coordinates?.attacked[0]?.coordinate, `attacked`)
+  // useEffect(() => {
+  //   setAttacked(data.coordinates.attacked)
+  // }, [data])
 
   const [isAttack, setIsAttack] = useState(false)
   const [styleBtn, setStyleBtn] = useState('btn')
@@ -36,11 +43,13 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   // Place Buff
   useEffect(() => {
     function generateBoard() {
-      let boards = []
+      let newBoards = []
       for(let i = 0; i < 16; i++){
         let temp = []
         for(let j = 0; j < 16; j++){
           // Place atlantis
+          // console.log(`ini dalam for`)
+          // console.log(i === atlantisCoordinate[0] && j === atlantisCoordinate[1])
           if(i === atlantisCoordinate[0] && j === atlantisCoordinate[1]) temp.push(['atlantis'])
           
           // Place Plus Bomb
@@ -52,26 +61,29 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
 
           else temp.push(['none'])
         }
-        console.log(temp)
-        boards.push(temp)
+        // console.log(temp, `ini temp`)
+        newBoards.push(temp)
       }
       setIsBoardFilled(true)
-      setBoards(boards)
+      setBoards(newBoards)
+      // console.log(newBoards, `ini new boards`)
     }
     generateBoard()
-  }, [])
+  }, [data])
 
   // Place Attacked
-  // useEffect(() => {
-  //   function placeAttack() {
-  //     let newBoard = JSON.parse(JSON.stringify(boards))
-  //     attacked.forEach(atkCoor => {
-  //       newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
-  //     })
-  //     setBoards(newBoard)
-  //   }
-  //   attacked.length > 0 && placeAttack()
-  // }, [attacked])
+  useEffect(() => {
+    function placeAttack() {
+      // console.log(boards, `ini new boards`)
+      let newBoard = JSON.parse(JSON.stringify(boards))
+      // console.log(newBoard, `ini new board`)
+      // attacked.forEach(atkCoor => {
+        // newBoard[attacked[0]][attacked[1]] = ['hit']
+      // })
+      setBoards(newBoard)
+    }
+    attacked?.length > 0 && placeAttack()
+  }, [attacked])
 
   // Place Kapal
   useEffect(() => {
@@ -89,22 +101,24 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   useEffect(() => {
     function revealAttackTemp() {
       let newBoards = JSON.parse(JSON.stringify(boards))
-      // newBoards[attackCoordinateTemp[0]][attackCoordinateTemp[1]] = ['hit']
+      newBoards[attackCoordinateTemp[0]][attackCoordinateTemp[1]] = ['hit']
       setBoards(newBoards)
     }
     attackCoordinateTemp.length > 0 && revealAttackTemp()
+    
   }, [attackCoordinateTemp])
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      // setIsAttack(true)
-      // setStyleBtn('')
+      setIsAttack(true)
+      setStyleBtn('')
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
     }
   }
   
+  // console.log(boards)
   return (
     <div>
       <h1>Ini enemy {boards.length}</h1>

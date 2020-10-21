@@ -21,6 +21,7 @@ function Start(props) {
 
   useEffect(() => {
     function sendAttackEnemyCoor() {
+      // console.log(attackEnemy.length === totalEnemy, `ini dalam useeffect`)
       socket.emit("resolveAttacks", attackEnemy);
     }
     attackEnemy.length === totalEnemy && sendAttackEnemyCoor();
@@ -28,6 +29,7 @@ function Start(props) {
   
   useEffect(() => {
     socket.on("resolved", (data) => {
+      console.log(data, `ini hasil resolved`)
       let players = data.filter((board) => board.socketId === socket.id);
       let enemy = data.filter((board) => board.socketId != socket.id);
       setAllData(data);
