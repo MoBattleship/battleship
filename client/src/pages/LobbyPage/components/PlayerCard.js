@@ -13,61 +13,14 @@ function PlayerCard({ player, playerColours }) {
     "#fff200",
     "#f8a5c2",
   ];
-  // let newColour = []
-  // playerColours = playerColours.map(color => {
-  //   // console.log(colours.includes(color.color), 'ini color.color')
-  //   if(!colours.includes(color.color)) {
-  //     newColour.push(colours[colours.indexOf(color.color)])
-  //   }
-  // })
-  // // for (let i = 0; i < colours.length; i++) {
-  // //   for (let j = 0; j < playerColours.length; j++) {
-  // //     if (colours[i] !== playerColours[j]) {
-  // //       newColour.push(colours[i])
-  // //     }
-  // //   }
-  // // }
-  // // console.log(newColour, 'ini newColour')
-  // console.log(playerColours, 'ini playerColours')
-  // console.log(player, 'ini player di card')
-  // console.log(player.socketId, 'ini player.socketId')
-  // console.log(socket.id, 'ini socket.id')
-  // const [playerColour, setPlayerColour] = useState(player.color);
-
+  
   function playerColourGenerator(selectedColour) {
-    console.log(selectedColour, '=======INI selectedcolour')
     socket.emit("changeColor", {selectedColour, socketId: player.socketId})
-    // setPlayerColour(selectedColour);
-    // console.log(playerColour, "ini playercolour");
   }
 
   useEffect(() => {
-    console.log('--------------------2', player.socketId, allPlayers)
     const p = allPlayers.filter(currentPlayer => currentPlayer.socketId === player.socketId)[0]
-    console.log(p, '=====================ini p')
-    // setPlayerColour(p.color)
-    // setPlayerColour(p.color)
-    // allPlayers.forEach(playerData => {
-    //   if(player.socketId === playerData.socketId) {
-    //     setPlayerColour(playerData.color)
-    //   }
-    // })
   }, [allPlayers])
-
-  // useEffect(() => {
-  //   socket.on("updateRoom", (lobby) => {
-  //     console.log('--------------------1', lobby.players)
-  //     const color = lobby.players.filter(player => {
-  //       if (player.socketId === socket.id) {
-  //         return player.color
-  //       }
-  //     })
-  //     console.log(color, '==================ini color')
-  //     setPlayerColour(color[0].color) 
-  //     setAllPlayers(lobby.players)
-  //     // console.log(allPlayers, lobby, 'ini allPlayers')
-  //   })
-  // }, [])
   
   return (
     <div>
