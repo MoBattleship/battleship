@@ -275,7 +275,7 @@ module.exports = function (io) {
       console.log(attackers[code], `ini attackers code`)
       playersBoard.forEach((board, index) => {
         if (
-          socketDamage.underFire.length > 0 &&
+          board.underFire.length > 0 &&
           index === attackers[code].length - 1
         ) {
           advanceFlag = true;
