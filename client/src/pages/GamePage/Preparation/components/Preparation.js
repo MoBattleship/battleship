@@ -63,8 +63,15 @@ function Preparation({handleDisplay}) {
       socket.emit("ready", { temp })
     }
 
+    
     allCoor.length === 17 && ready()
   }, [allCoor])
+
+  // useEffect(() => {
+  //   socket.on('announcements', (announcement) => {
+  //   console.log(announcement)
+  //   })
+  // }, [])
   
   const onDragOver = (e, row, coll) => {
     e.preventDefault();

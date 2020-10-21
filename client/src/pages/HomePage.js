@@ -16,6 +16,7 @@ function HomePage() {
   const [isListening, setIsListening] = useState(false);
   const history = useHistory();
   const [code, setCode] = useState("");
+  const [showGuide, setShowGuide] = useState(false)
   const handleClose = () => setShow(false);
   const handleShow = () => {
     name && setShow(true);
@@ -25,6 +26,10 @@ function HomePage() {
   const handleJoin = (e) => {
     history.push("/lobby", { code, name, status: "member" })
   };
+
+  const handleShowGuide = () => {
+    setShowGuide(true)
+  }
 
   const handleInputCode = (event) => {
     setCode(event.target.value);
@@ -80,7 +85,9 @@ function HomePage() {
   return (
     <div>
       <div className="splash-container">
-        <img src="./images/sunset.svg" alt="logo" />
+        <div className="row justify-content-center">
+          <img src="./images/sunset.svg" alt="logo" />
+        </div>
         <div className="splash-form">
           <div className="row justify-content-center">
             <h2>Input Your Name</h2>
@@ -92,13 +99,15 @@ function HomePage() {
               onChange={handleInputName}
               value={name}
             />
-            <img
-              className="ml-2 border rounded-lg"
-              role="button"
-              onClick={handleOnListening}
-              style={{ height: "25px", width: "25px", padding: 2 }}
-              src="https://cdn.iconscout.com/icon/free/png-512/mic-257-474988.png"
-            ></img>
+            <Button 
+              onClick={handleShowGuide} 
+              className="btn-sm btn-primary m-1"
+            >?</Button>
+            <Button 
+            onClick={handleOnListening}
+            className="btn-sm btn-primary">
+            <i class="fas fa-microphone-alt"></i>
+            </Button>
             {isListening && <p>Listening</p>}
           </div>
         </div>
@@ -129,6 +138,21 @@ function HomePage() {
                 </Button>
               </Modal.Footer>
             </Modal>
+
+            <Modal
+            style={{fontFamily: 'Piedra'}}
+              size="lg"
+              show={showGuide}
+              onHide={() => setShowGuide(false)}
+              aria-labelledby="example-modal-sizes-title-lg"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="example-modal-sizes-title-lg">
+                  Large Modal
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Guidenya disini gaes</Modal.Body>
+          </Modal>
           </div>
         </div>
       </div>
