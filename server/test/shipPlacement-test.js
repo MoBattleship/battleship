@@ -29,12 +29,36 @@ describe("Leave tests", () => {
   it('Successful placing', function(done) {
     let dummyBoard = [
       {
-        shipName: ''
+        shipName: 'a',
+        length: 5,
+        coordinates: [[1,1], [1,2], [1,3],[1,4],[1,5]]
+      },
+      {
+        shipName: 'b',
+        length: 4,
+        coordinates: [[2,1], [2,2], [2,3],[2,4]]
+      },
+      {
+        shipName: 'c',
+        length: 3,
+        coordinates: [[3,1], [3,2], [3,3]]
+      },
+      {
+        shipName: 'd',
+        length: 3,
+        coordinates: [[4,1], [4,2], [4,3]]
+      },
+      {
+        shipName: 'e',
+        length: 2,
+        coordinates: [[5,1], [5,2]]
       }
     ]
     dumSocket2.once('allBoards', (res) => {
+      console.log(res, 'ini resnya');
       done()
     })
-    dumSocket1.emit('ready', )
+    dumSocket1.emit('ready', { temp: dummyBoard })
+    dumSocket2.emit('ready', { temp: dummyBoard })
   })
 })

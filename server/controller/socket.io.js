@@ -194,7 +194,7 @@ module.exports = function (io) {
         }
       }
 
-      const [name] = lobby.players.filter(
+      const [playerProfile] = lobby.players.filter(
         (player) => player.socketId === socket.id
       );
 
@@ -208,7 +208,7 @@ module.exports = function (io) {
 
       const coordinates = {
         socketId: socket.id,
-        name: name,
+        name: playerProfile.name,
         activePowers: {
           bombCount: 1,
           power: false,
@@ -255,7 +255,8 @@ module.exports = function (io) {
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
-      const [name] = lastBoard.filter(player => player.socketId === socket.id)
+      const [playerProfile] = lastBoard.filter(player => player.socketId === socket.id)
+      const name = playerProfile.name
       socket
         .to(code)
         .emit("announcement", `${name} has sent their attacks.`);
