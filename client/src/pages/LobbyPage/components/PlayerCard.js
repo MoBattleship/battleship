@@ -26,7 +26,7 @@ function PlayerCard({ player, playerColours }) {
     <div>
       <div className="col ml-5 mr-5 mt-3 mb-3">
         <Card style={{ width: "18rem" }}>
-          <h5 style={{ backgroundColor: player.color }}>{player.socketId}</h5>
+          <h5 style={{ backgroundColor: player.color }}>{player.name}</h5>
           <div className="justify-content-center">
             <Card.Img
               style={styles.image}
@@ -35,7 +35,6 @@ function PlayerCard({ player, playerColours }) {
             />
           </div>
           <Card.Body>
-            <Card.Title>{player.name}</Card.Title>
             <Card.Text>Select Color:</Card.Text>
             {socket.id === player.socketId && 
             <div>
