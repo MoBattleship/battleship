@@ -19,17 +19,19 @@ function Start(props) {
   const [isBoardFilled, setIsBoardFilled] = useState(false);
   const [styleBtn, setStyleBtn] = useState('btn');
 
+  
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor]);
   };
-
+  
   const handleNewUserMessage = (newMessage) => {
-    socket.emit("chatMessage", { socketId: socket.id, message: newMessage })
+    console.log(playerData[0].name, "<<< ini namenya")
+    socket.emit("chatMessage", { sender: playerData[0].name, message: newMessage })
   }
 
   useEffect(() => {
     socket.on("chatMessage", (data) => {
-      addResponseMessage(`${data.socketId} \r\n
+      addResponseMessage(`${data.sender} \r\n
       ${data.message}`)
     })
   }, [])

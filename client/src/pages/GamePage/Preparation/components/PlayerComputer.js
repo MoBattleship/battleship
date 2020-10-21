@@ -64,6 +64,9 @@ function PlayerComputer({ changeDisplay }) {
 
   return (
     <div>
+     <div className="container justify-content-center">
+        <img src="./images/mo-battleship.png" style={{ height: "10rem" }} />
+      </div>  
       <button className="btn btn-info m-1" onClick={handlePositionY}>
         Vertical
       </button>
