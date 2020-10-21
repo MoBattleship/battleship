@@ -65,7 +65,8 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   useEffect(() => {
     function placeAttack() {
       let newBoard = JSON.parse(JSON.stringify(boards))
-      attacked.forEach(atkCoor => {
+      attacked.forEach(coor => {
+        const { coordinate: atkCoor} = coor
         newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
       })
       setBoards(newBoard)
