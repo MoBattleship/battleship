@@ -16,17 +16,19 @@ function Start(props) {
   const [attackEnemy, setAttackEnemy] = useState([]);
   const [attackFlag, setAttackFlag] = useState(false);
 
+  
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor]);
   };
-
+  
   const handleNewUserMessage = (newMessage) => {
-    socket.emit("chatMessage", { socketId: socket.id, message: newMessage })
+    console.log(playerData[0].name, "<<< ini namenya")
+    socket.emit("chatMessage", { sender: playerData[0].name, message: newMessage })
   }
 
   useEffect(() => {
     socket.on("chatMessage", (data) => {
-      addResponseMessage(`${data.socketId} \r\n
+      addResponseMessage(`${data.sender} \r\n
       ${data.message}`)
     })
   }, [])

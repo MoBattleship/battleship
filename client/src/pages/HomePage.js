@@ -40,7 +40,7 @@ function HomePage() {
   };
   
   const handleHost = () => {
-    history.push('/lobby', { name, status: "host" })
+   name && history.push('/lobby', { name, status: "host" })
   };
 
 
@@ -86,7 +86,7 @@ function HomePage() {
     <div>
       <div className="splash-container">
         <div className="row justify-content-center">
-          <img src="./images/sunset.svg" alt="logo" />
+          <img src="./images/mo-battleship.png" style={{ height: "30rem" }} alt="logo" />
         </div>
         <div className="splash-form">
           <div className="row justify-content-center">
@@ -118,9 +118,9 @@ function HomePage() {
             </button>
             <button className="button splash-btn" onClick={handleShow}>JOIN</button>
 
-            <Modal show={show} onHide={handleClose} animation={true}>
+            <Modal style={{ fontFamily: 'Piedra'}} className="modal" show={show} onHide={handleClose} animation={true}>
               <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
+                <Modal.Title>Input Room Code</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <input
