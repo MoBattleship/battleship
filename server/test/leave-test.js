@@ -1,7 +1,7 @@
 const io = require("socket.io-client");
 const { expect } = require("chai");
 
-describe("Leave tests", () => {
+describe("Leave Tests", () => {
   const dumSocket1 = io('http://localhost:4000')
   const dumSocket2 = io('http://localhost:4000')
   let code

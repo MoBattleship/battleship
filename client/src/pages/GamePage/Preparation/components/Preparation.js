@@ -122,6 +122,7 @@ function Preparation({handleDisplay}) {
   
   useEffect(() => {
     socket.on("allBoards", (data) => {
+      socket.off('chatMessage')
       history.push("/start", {data})
     })
   }, [])

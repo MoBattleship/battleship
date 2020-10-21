@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
-function PlayerBoard({data}) {
+function PlayerBoard({data, isBoardFilled: fillBoard}) {
+  console.log(data, `ini data player boards`)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach(el => {
@@ -12,14 +13,20 @@ function PlayerBoard({data}) {
     })
   })
   
-  const atlantisCoordinate = data.coordinates.atlantis
-  const plusBombCoordinate = data.coordinates.bombCount
-  const plusPowerCoordinate = data.coordinates.bombPower
+  // const atlantisCoordinate = data.coordinates.atlantis
+  // const plusBombCoordinate = data.coordinates.bombCount
+  // const plusPowerCoordinate = data.coordinates.bombPower
   // const attackedCoordinate = data.attacked
-  
+
+  const [atlantisCoordinate, _atlantisCoordinate] = useState(data.coordinates.atlantis)
+  const [plusBombCoordinate, _plusBombCoordinate] = useState(data.coordinates.bombCount)
+  const [plusPowerCoordinate, _plusPowerCoordinate] = useState(data.coordinates.bombPower)
+  const attacked = data.coordinates?.attacked
+
   // DUMMY BOARDS
   const [boards, setBoards] = useState([])
-  const [isBoardFilled, setIsBoardFilled] = useState(false)
+  const [isBoardFilled, setIsBoardFilled] = useState(fillBoard)
+  // let isBoardFilled = fillBoard
   const alphabeth = "_ABCDEFGHIJKLMNO"
   const numbers = ["",1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
@@ -44,10 +51,25 @@ function PlayerBoard({data}) {
         }
         boards.push(temp)
       }
+      // isBoardFilled = true
       setIsBoardFilled(true)
       setBoards(boards)
     }
     generateBoard()
+  }, [])
+
+  // Place Attacked
+  useEffect(() => {
+    function placeAttack() {
+      let newBoard = JSON.parse(JSON.stringify(boards))
+      attacked.forEach(coor => {
+        const { coordinate: atkCoor} = coor
+        newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
+        newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
+      })
+      setBoards(newBoard)
+    }
+    attacked.length > 0 && placeAttack()
   }, [])
 
   // Place Kapal
@@ -55,12 +77,17 @@ function PlayerBoard({data}) {
     function placeShips(){
       let newBoard = JSON.parse(JSON.stringify(boards))
       allShipsCoordinate.forEach((coor, i) => {
+        console.log(coor, `ini coor tapi di playerboard`)
         newBoard[coor[0][0]][coor[0][1]] = ['ship', coor[1]]
       })
+      console.log(newBoard, `ini new board`)
       setBoards(newBoard)
     }
+    // console.log(boards.length, `ini boards length`)
+    // console.log(isBoardFilled, `ini isboardfilled`)
     boards.length > 1 && placeShips()
   }, [isBoardFilled])
+  console.log(isBoardFilled)
   return (
     <div>
       <div className="container">
@@ -100,12 +127,17 @@ function PlayerBoard({data}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll[0] === 'ship' && !coll[1] && <div key={collIdx} className="border border-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}>S</div>
+                          && coll[0] === 'ship' && !coll[1] && <div key={collIdx} className="border border-white" style={{color: "red", backgroundColor: "red", width: "40px", height: "40px"}}>X</div>
                         }
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
                           && coll[0] === 'none' && <div key={collIdx} className="border border-white" style={{backgroundColor: "#1B9CC6", width: "40px", height: "40px"}}></div>
+                        }
+                        {
+                          rowIdx !== 0 
+                          && collIdx !== 0 
+                          && coll[0] === 'hit' && <div key={collIdx} className="border border-white" style={{backgroundColor: "red", width: "40px", height: "40px"}}></div>
                         }
                       </div>
                     )

@@ -30,9 +30,12 @@ function GamePage(props) {
       ${data.message}`)
     })
   }, [])
-  // handleNewUserMessage = (newMessage) => {
-  //   console.log(newMessage, 'ini newMessage')
-  // }
+
+  useEffect(() => {
+    socket.on("announcement", (data) => {
+      addResponseMessage(data)
+    })
+  }, [])
 
   useEffect(() => {
     
