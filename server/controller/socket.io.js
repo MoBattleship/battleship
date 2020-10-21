@@ -226,7 +226,7 @@ module.exports = function (io) {
       if (!attackers[code]) {
         attackers[code] = {
           hasAttacked: 0,
-          defendants: []
+          defendants: [],
         };
       }
       attackers[code].defendants.push({ socketId: socket.id, underFire: [] });
@@ -256,13 +256,13 @@ module.exports = function (io) {
       const code = Object.keys(socket.rooms)[1];
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
-      const [playerProfile] = lastBoard.filter(player => player.socketId === socket.id)
-      const name = playerProfile.name
-      socket
-        .to(code)
-        .emit("announcement", `${name} has sent their attacks.`);
+      const [playerProfile] = lastBoard.filter(
+        (player) => player.socketId === socket.id
+      );
+      const name = playerProfile.name;
+      socket.to(code).emit("announcement", `${name} has sent their attacks.`);
 
-      attackers[code].hasAttacked += 1
+      attackers[code].hasAttacked += 1;
       attackers[code].defendants.forEach((attack) => {
         bombs.forEach((bomb) => {
           if (attack.socketId === bomb.socketId) {
@@ -274,7 +274,9 @@ module.exports = function (io) {
         });
       });
 
-      const playerCount = lastBoard.length
+      // Check loser
+      const lastBoardCount = lastBoard.filter(player => player.isLose === false);
+      const playerCount = lastBoardCount.length
 
       if (attackers[code].hasAttacked === playerCount) {
         io.to(code).emit("resolving");
@@ -283,7 +285,7 @@ module.exports = function (io) {
           attackers[code].defendants.forEach((attack) => {
             if (boardOfSocket.socketId === attack.socketId) {
               attack.underFire.forEach((coor) => {
-                boardOfSocket.coordinates.attacked.push(coor);
+                boardOfSocket.coordinates.attacked.push(coor)
               });
             }
           });
@@ -306,9 +308,9 @@ module.exports = function (io) {
               });
 
               // Check is the player is lose or not
-              let aliveShip = ships.filter(ship => ship.isAlive === true)
+              let aliveShip = ships.filter((ship) => ship.isAlive === true);
               if (aliveShip.length === 0) {
-                player.isLose = true
+                player.isLose = true;
               }
             });
 
@@ -345,9 +347,11 @@ module.exports = function (io) {
           });
 
           // Check winner
-          const winner = lastBoard.filter(playerCheckWinner => playerCheckWinner.isLose === false)
+          const winner = lastBoard.filter(
+            (playerCheckWinner) => playerCheckWinner.isLose === false
+          );
           if (winner.length === 1) {
-            io.to(code).emit('winner', winner)
+            io.to(code).emit("winner", winner);
           }
         });
 
@@ -362,6 +366,7 @@ module.exports = function (io) {
 
         console.log("Hits resolved. Sending to client...");
         io.to(code).emit("resolved", lastBoard);
+        attackers[code].hasAttacked = 0
         attackers[code].defendants.forEach((player) => {
           player.underFire = [];
         });

@@ -12,7 +12,6 @@ function GamePage(props) {
   const code = props?.location?.state?.roomCode
 
   function handleNewUserMessage(newMessage) {
-    console.log(newMessage, 'ini newMessage')
     let senderName = ''
     players.map(player => {
       if(player.socketId === socket.id) {
@@ -30,7 +29,6 @@ function GamePage(props) {
     socket.on("chatMessage", (data) => {
       addResponseMessage(`${data.sender} \r\n
       ${data.message}`)
-      console.log(data, 'ini balikan dari server')
     })
   }, [])
 

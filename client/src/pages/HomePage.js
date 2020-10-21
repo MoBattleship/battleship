@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
+import microphone from '../assets/microphone.png'
 
 
 const SpeechRecognition =
@@ -92,7 +93,7 @@ function HomePage() {
           <div className="row justify-content-center">
             <h2>Input Your Name</h2>
           </div>
-          <div className="row justify-content-center">
+          <div className="row justify-content-center align-items-center">
             <input
               type="text"
               className="input-form"
@@ -101,14 +102,20 @@ function HomePage() {
             />
             <Button 
               onClick={handleShowGuide} 
-              className="btn-sm btn-primary m-1"
+              className="btn-sm btn-info m-1"
             >?</Button>
-            <Button 
+            <button 
             onClick={handleOnListening}
-            className="btn-sm btn-primary">
-            <i class="fas fa-microphone-alt"></i>
-            </Button>
-            {isListening && <p>Listening</p>}
+            className="btn-sm p-0 btn-info"
+            style={{padding: 0,
+              height: '30px',
+              width: '25px',
+              backgroundImage: `url(${microphone})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'}}
+            >
+            </button>
+            {isListening && <a>Listening</a>}
           </div>
         </div>
         <div>
@@ -140,7 +147,8 @@ function HomePage() {
             </Modal>
 
             <Modal
-            style={{fontFamily: 'Piedra'}}
+              style={{fontFamily: 'Piedra'}}
+              className="border border-info rounded-lg shadow-sm"
               size="lg"
               show={showGuide}
               onHide={() => setShowGuide(false)}
