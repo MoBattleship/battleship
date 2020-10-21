@@ -35,6 +35,7 @@ module.exports = function (io) {
             socketId: socket.id,
             name,
             color: colours[0],
+            activePowers: []
           },
         ],
       });
@@ -88,6 +89,7 @@ module.exports = function (io) {
                   socketId: socket.id,
                   name,
                   color: colours[room.players.length],
+                  activePowers: []
                 },
               },
             }
