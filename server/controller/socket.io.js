@@ -308,6 +308,12 @@ module.exports = function (io) {
                   ship.isAlive = false;
                 }
               });
+
+              // Check is the player is lose or not
+              let aliveShip = ships.filter(ship => ship.isAlive === true)
+              if (aliveShip.length === 0) {
+                player.isLose = true
+              }
             });
 
             // Check Bomb Count
@@ -341,6 +347,12 @@ module.exports = function (io) {
               });
             }
           });
+
+          // Check winner
+          const winner = lastBoard.filter(playerCheckWinner => playerCheckWinner.isLose === false)
+          if (winner.length === 1) {
+            io.to(code).emit('winner', winner)
+          }
         });
 
         await db.collection("lobby").updateOne(
