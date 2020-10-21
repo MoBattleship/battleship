@@ -208,6 +208,7 @@ module.exports = function (io) {
       const coordinates = {
         socketId: socket.id,
         name: playerProfile.name,
+        color: playerProfile.color,
         activePowers: {
           bombCount: 1,
           power: false,
