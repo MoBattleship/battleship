@@ -4,7 +4,6 @@ import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
 import { Chat, addResponseMessage } from 'react-chat-popup'
-let count = 0
 function Start(props) {
   const history = useHistory()
   // let [count, setCount] = useState(0)
@@ -19,6 +18,7 @@ function Start(props) {
   const [isBoardFilled, setIsBoardFilled] = useState(false);
   const [styleBtn, setStyleBtn] = useState('btn');
 
+  let count = 0
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor]);
   };
@@ -47,12 +47,13 @@ function Start(props) {
       console.log(attackEnemy, `ini attack enemy`)
       socket.emit("resolveAttacks", attackEnemy);
     }
-    attackEnemy.length === totalEnemy && sendAttackEnemyCoor();
+    attackEnemy.length === (totalEnemy-count) && sendAttackEnemyCoor();
   }, [attackEnemy]);
   
   useEffect(() => {
     socket.on("resolved", (data) => {
-      console.log(data, `ini hasil resolved`)
+      let newData = data.filter(player => !player.isLose)
+      let newLoseData = data.filter(player => player.isLose)
       let players = data.filter((board) => board.socketId === socket.id);
       let enemy = data.filter((board) => board.socketId != socket.id);
       setAttackEnemy([])
@@ -62,13 +63,13 @@ function Start(props) {
       setAttackFlag(false);
       setStyleBtn('btn')
       setIsBoardFilled(false)
+      count = newLoseData
+      players[0].isLose && history.push("/endgame", {status: "loser", playerData: players[0]}) 
+      newData.length === 1 && history.push("/endgame", {status: "winner", playerData: players[0]}) 
     });
 
-    socket.on("winner", (data) => {
-      console.log(data, `ini data winner`)
-      history.push("/endgame", {winner: data[0]})
-    })
-  }, []);
+    }, []);
+    
   return (
     <div>
       <div>
@@ -76,17 +77,14 @@ function Start(props) {
       </div>
       <div>
         {enemyData.map((enemy, idx) => {
-          count++
-          console.log(count)
-          return (
-            <EnemyBoard
-            key={enemy.socketId}
+              return !enemy.isLose &&
+              <EnemyBoard
+              key={enemy.socketId}
               attackFlag={attackFlag}
               handleAttackEnemy={handleAttackEnemy}
               styleBtn={styleBtn}
               data={enemy}
             />
-          );
         })}
       </div>
       <div>

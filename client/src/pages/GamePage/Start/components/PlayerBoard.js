@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
 function PlayerBoard({data, isBoardFilled: fillBoard}) {
-  console.log(data, `ini data player boards`)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach(el => {
@@ -87,10 +86,10 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
     // console.log(isBoardFilled, `ini isboardfilled`)
     boards.length > 1 && placeShips()
   }, [isBoardFilled, data])
-  console.log(isBoardFilled)
   return (
     <div>
       <div className="container">
+        <h1 className="text-center">Player Name: {data.name}</h1>
         {
           boards.map((row, rowIdx) => {
             return <div key={rowIdx} className="d-flex flex-wrap" style={{width: "640px"}}>

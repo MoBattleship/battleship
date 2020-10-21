@@ -104,8 +104,8 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
   
   return (
     <div>
-      <h1>Ini enemy {boards.length}</h1>
       <div className="container">
+      <h1 className="text-center">Enemy Name: {data.name}</h1>
         {
           boards.map((row, rowIdx) => {
             return <div key={rowIdx} className="d-flex flex-wrap" style={{width: "640px"}}>
