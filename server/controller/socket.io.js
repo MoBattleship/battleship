@@ -200,7 +200,7 @@ module.exports = function (io) {
 
       socket
         .to(code)
-        .emit("announcement", `${name} has placed their ships`);
+        .emit("announcement", `${playerProfile.name} has placed their ships`);
 
       payload.forEach((ship) => {
         ship.isAlive = true;
