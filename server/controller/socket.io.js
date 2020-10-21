@@ -158,6 +158,7 @@ module.exports = function (io) {
       console.log(socket.id, "has placed their ships");
       let specials = [];
       const code = Object.keys(socket.rooms)[1];
+      socket.to(code).emit('announcement', `${socket.id} has placed their ships`)
       const lobby = await db.collection("lobby").findOne({ code });
 
       while (true) {
@@ -226,6 +227,7 @@ module.exports = function (io) {
 
       if (boards.length === lobby.players.length) {
         console.log("All players have placed their ships");
+        socket.to(code).emit('announcement', 'All players have placed their ships')
         const startBoardLog = [boards];
         await db.collection("lobby").updateOne(
           { code },
@@ -240,10 +242,12 @@ module.exports = function (io) {
       }
     });
 
+    // Resolving each attacks
     socket.on("resolveAttacks", async (bombs) => {
       console.log(socket.id + " has sent their attacks.");
       let advanceFlag = false;
       const code = Object.keys(socket.rooms)[1];
+      socket.to(code).emit('announcement', `${socket.id} has sent their attacks.`)
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
 
@@ -284,7 +288,7 @@ module.exports = function (io) {
 
         // Check every players of any sunk ship and special hits
         lastBoard.forEach((player) => {
-          let { coordinates, activePowers, isLose } = player;
+          let { coordinates } = player;
           let { attacked, ships, bombCount, bombPower, atlantis } = coordinates;
           attacked.forEach((point) => {
             ships.forEach((ship) => {
@@ -346,6 +350,26 @@ module.exports = function (io) {
         });
       }
     });
+
+    // CHATBOX
+    // Send message
+    socket.on("chatMessage", (data) => {
+      socket
+        .to(Object.keys(socket.rooms)[1])
+        .broadcast.emit("chatMessage", data);
+    });
+
+    // Check typing
+    socket.on("typing", (data) => {
+      socket.to(Object.keys(socket.rooms)[1]).broadcast.emit("typing", data);
+    });
+
+    // Check stop typing
+    socket.on("stopTyping", () => {
+      socket.to(Object.keys(socket.rooms)[1]).broadcast.emit("stopTyping");
+    });
+
+    // For testing purpose
 
     socket.on("nukeDatabase", async () => {
       await db.collection("lobby").deleteMany({});
