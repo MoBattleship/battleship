@@ -91,13 +91,37 @@ describe("Attacking Tests", () => {
         coordinate: [2, 2]
       }
     ]
-    dumSocket2.on("resolved", (res) => {
+    dumSocket2.once("resolved", (res) => {
       console.log(res, "ini resnya");
-      done();
     });
     console.log(dumSocket1.id, 'socket 1');
     console.log(dumSocket2.id, 'socket 2');
     dumSocket1.emit('resolveAttacks', dummyAttack1)
     dumSocket2.emit('resolveAttacks', dummyAttack2)
+
+    setTimeout(() => {
+      let dummyAttack1 = [
+        {
+          socketId: dumSocket2.id,
+          coordinate: [3, 3]
+        }
+      ]
+      let dummyAttack2 = [
+        {
+          socketId: dumSocket1.id,
+          coordinate: [4, 4]
+        }
+      ]
+      dumSocket2.once("resolved", (res) => {
+        console.log(res, "ini res yg kedua");
+        done();
+      });
+      dumSocket1.emit('resolveAttacks', dummyAttack1)
+      dumSocket2.emit('resolveAttacks', dummyAttack2)
+    }, 1000)
   });
+
+  // it('2nd attack wave', function(done) {
+
+  // })
 });
