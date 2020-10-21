@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
-function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
-  console.log(data, `ini data dari enemy board`)
+function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach(el => {
@@ -13,17 +12,13 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
     })
   })
   
-  const atlantisCoordinate = data.coordinates.atlantis
-  const plusBombCoordinate = data.coordinates.bombCount
-  const plusPowerCoordinate = data.coordinates.bombPower
-  const [attacked, setAttacked] = useState(data.coordinates.attacked)
+  const [atlantisCoordinate, _atlantisCoordinate] = useState(data.coordinates.atlantis)
+  const [plusBombCoordinate, _plusBombCoordinate] = useState(data.coordinates.bombCount)
+  const [plusPowerCoordinate, _plusPowerCoordinate] = useState(data.coordinates.bombPower)
+  const attacked = data.coordinates?.attacked
 
-  useEffect(() => {
-    setAttacked(data.coordinates.attacked)
-  }, [data])
-
-  const [isAttack, setIsAttack] = useState(false)
-  const [styleBtn, setStyleBtn] = useState('btn')
+  let isAttack = attackFlag
+  let styleBtn = setBtn
   const [attackEnemy, setAttackEnemy] = useState({})
   const [attackCoordinateTemp, setAttackCoordinateTemp] = useState([])
 
@@ -36,7 +31,7 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   // Place Buff
   useEffect(() => {
     function generateBoard() {
-      let boards = []
+      let newBoards = []
       for(let i = 0; i < 16; i++){
         let temp = []
         for(let j = 0; j < 16; j++){
@@ -52,14 +47,13 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
 
           else temp.push(['none'])
         }
-        console.log(temp)
-        boards.push(temp)
+        newBoards.push(temp)
       }
       setIsBoardFilled(true)
-      setBoards(boards)
+      setBoards(newBoards)
     }
     generateBoard()
-  }, [])
+  }, [data])
 
   // Place Attacked
   useEffect(() => {
@@ -68,12 +62,13 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
       attacked.forEach(coor => {
         const { coordinate: atkCoor} = coor
         newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
+        newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
       })
       setBoards(newBoard)
     }
     attacked.length > 0 && placeAttack()
-  }, [attacked])
-
+  }, [data])
+  
   // Place Kapal
   useEffect(() => {
     function placeShips(){
@@ -84,7 +79,7 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
       setBoards(newBoard)
     }
     boards.length > 1 && placeShips()
-  }, [isBoardFilled])
+  }, [data])
 
   // Reveal Attack Temp
   useEffect(() => {
@@ -94,12 +89,13 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
       setBoards(newBoards)
     }
     attackCoordinateTemp.length > 0 && revealAttackTemp()
+    
   }, [attackCoordinateTemp])
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      setIsAttack(true)
-      setStyleBtn('')
+      isAttack = true
+      styleBtn = ''
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
