@@ -62,16 +62,16 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   }, [])
 
   // Place Attacked
-  useEffect(() => {
-    function placeAttack() {
-      let newBoard = JSON.parse(JSON.stringify(boards))
-      attacked.forEach(atkCoor => {
-        newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
-      })
-      setBoards(newBoard)
-    }
-    attacked.length > 0 && placeAttack()
-  }, [attacked])
+  // useEffect(() => {
+  //   function placeAttack() {
+  //     let newBoard = JSON.parse(JSON.stringify(boards))
+  //     attacked.forEach(atkCoor => {
+  //       newBoard[atkCoor[0]][atkCoor[1]] = ['hit']
+  //     })
+  //     setBoards(newBoard)
+  //   }
+  //   attacked.length > 0 && placeAttack()
+  // }, [attacked])
 
   // Place Kapal
   useEffect(() => {
@@ -89,7 +89,7 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
   useEffect(() => {
     function revealAttackTemp() {
       let newBoards = JSON.parse(JSON.stringify(boards))
-      newBoards[attackCoordinateTemp[0]][attackCoordinateTemp[1]] = ['hit']
+      // newBoards[attackCoordinateTemp[0]][attackCoordinateTemp[1]] = ['hit']
       setBoards(newBoards)
     }
     attackCoordinateTemp.length > 0 && revealAttackTemp()
@@ -97,8 +97,8 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag}) {
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      setIsAttack(true)
-      setStyleBtn('')
+      // setIsAttack(true)
+      // setStyleBtn('')
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})

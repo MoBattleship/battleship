@@ -56,7 +56,6 @@ function LobbyPage(props) {
 
   useEffect(() => {
     socket.on("updateRoom", (data) => {
-      console.log('============', data.players)
       setPlayersData(data.players);
       setRoomCode(data.code);
     });

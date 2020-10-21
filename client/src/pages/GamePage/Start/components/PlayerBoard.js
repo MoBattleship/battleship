@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
 function PlayerBoard({data}) {
-  console.log(data, `ini data player board`)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach(el => {
