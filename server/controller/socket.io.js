@@ -50,26 +50,26 @@ module.exports = function (io) {
       const code = Object.keys(socket.rooms)[1];
       const id = socket.id;
       const room = await db.collection("lobby").findOne({ code });
-      if (!room) {
-        console.log("that");
-      } else if (room.players.length === 1) {
-        await db.collection("lobby").deleteOne({ code });
-        socket.leave(code);
-      } else {
-        await db.collection("lobby").updateOne(
-          { code },
-          {
-            $pull: {
-              players: {
-                socketId: id,
+      if (room) {
+        if (room.players.length === 1) {
+          await db.collection("lobby").deleteOne({ code });
+          socket.leave(code);
+        } else {
+          await db.collection("lobby").updateOne(
+            { code },
+            {
+              $pull: {
+                players: {
+                  socketId: id,
+                },
               },
-            },
-          }
-        );
-        const newRoom = await db.collection("lobby").findOne({ code });
-        socket.leave(code);
-        console.log(socket.id + " left room " + code);
-        io.to(code).emit("updateRoom", newRoom);
+            }
+          );
+          const newRoom = await db.collection("lobby").findOne({ code });
+          socket.leave(code);
+          console.log(socket.id + " left room " + code);
+          io.to(code).emit("updateRoom", newRoom);
+        }
       }
     });
 
@@ -158,7 +158,6 @@ module.exports = function (io) {
       console.log(socket.id, "has placed their ships");
       let specials = [];
       const code = Object.keys(socket.rooms)[1];
-      socket.to(code).emit('announcement', `${socket.id} has placed their ships`)
       const lobby = await db.collection("lobby").findOne({ code });
 
       while (true) {
@@ -195,14 +194,16 @@ module.exports = function (io) {
         }
       }
 
-      const [name] = lobby.players.filter(player => player.socketId === socket.id)
+      const [name] = lobby.players.filter(
+        (player) => player.socketId === socket.id
+      );
+
+      socket
+        .to(code)
+        .emit("announcement", `${name} has placed their ships`);
 
       payload.forEach((ship) => {
         ship.isAlive = true;
-      });
-
-      payload.forEach((ship) => {
-        console.log(ship, "kocchi");
       });
 
       const coordinates = {
@@ -230,7 +231,9 @@ module.exports = function (io) {
 
       if (boards.length === lobby.players.length) {
         console.log("All players have placed their ships");
-        socket.to(code).emit('announcement', 'All players have placed their ships')
+        socket
+          .to(code)
+          .emit("announcement", "All players have placed their ships");
         const startBoardLog = [boards];
         await db.collection("lobby").updateOne(
           { code },
@@ -250,9 +253,12 @@ module.exports = function (io) {
       console.log(socket.id + " has sent their attacks.");
       let advanceFlag = false;
       const code = Object.keys(socket.rooms)[1];
-      socket.to(code).emit('announcement', `${socket.id} has sent their attacks.`)
       const lobby = await db.collection("lobby").findOne({ code });
       let lastBoard = lobby.boardLogs[lobby.boardLogs.length - 1];
+      const [name] = lastBoard.filter(player => player.socketId === socket.id)
+      socket
+        .to(code)
+        .emit("announcement", `${name} has sent their attacks.`);
 
       attackers[code].forEach((attack) => {
         bombs.forEach((bomb) => {
@@ -293,6 +299,8 @@ module.exports = function (io) {
         lastBoard.forEach((player) => {
           let { coordinates } = player;
           let { attacked, ships, bombCount, bombPower, atlantis } = coordinates;
+
+          // Check bomb hit
           attacked.forEach((point) => {
             ships.forEach((ship) => {
               ship.coordinates.forEach((coordinate) => {
@@ -334,8 +342,6 @@ module.exports = function (io) {
             }
           });
         });
-
-        // Check for any features hit
 
         await db.collection("lobby").updateOne(
           { code },
