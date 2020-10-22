@@ -57,7 +57,6 @@ function GamePage(props) {
       </div>
       <div>
         <Chat
-        // style={{top:position.y, left:position.x}}
         senderPlaceHolder="Type your message here..."
         badge={0}
         title="Chatbox"

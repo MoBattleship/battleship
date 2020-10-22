@@ -35,7 +35,9 @@ function PlayerCard({ player, playerColours }) {
             />
           </div>
           <Card.Body style={{ backgroundColor: "#ffffff" }}>
-            <Card.Text hidden={socket.id !== player.socketId} style={{ backgroundColor: "transparent" }} >Select Color:</Card.Text>
+            <div>
+              <Card.Text hidden={socket.id !== player.socketId} style={{ backgroundColor: "transparent" }} >Select Color:</Card.Text>
+            </div>
             {socket.id === player.socketId && 
             <div>
               <div className="row justify-content-left">

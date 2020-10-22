@@ -4,10 +4,9 @@ import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
 import { Chat, addResponseMessage } from 'react-chat-popup'
-let count = 0
+
 function Start(props) {
   const history = useHistory()
-  // let [count, setCount] = useState(0)
   const [allData, setAllData] = useState(props.location.state.data);
   let playersTemp = allData.filter((board) => board.socketId === socket.id);
   let enemyTemp = allData.filter((board) => board.socketId != socket.id);
@@ -18,7 +17,8 @@ function Start(props) {
   const [attackFlag, setAttackFlag] = useState(false);
   const [isBoardFilled, setIsBoardFilled] = useState(false);
   const [styleBtn, setStyleBtn] = useState('btn');
-
+  console.log(playerData, `ini player data`)
+  let [count, setCount] = useState(0)
   
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor]);
@@ -36,7 +36,6 @@ function Start(props) {
     })
   }, [])
 
-
   useEffect(() => {
     socket.on("announcement", (data) => {
       addResponseMessage(data)
@@ -45,16 +44,17 @@ function Start(props) {
 
   useEffect(() => {
     function sendAttackEnemyCoor() {
-      console.log(attackEnemy.length === totalEnemy, `ini dalam useeffect`)
-      console.log(attackEnemy, `ini attack enemy`)
       socket.emit("resolveAttacks", attackEnemy);
     }
-    attackEnemy.length === totalEnemy && sendAttackEnemyCoor();
-  }, [attackEnemy]);
+    // (attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === (totalEnemy-count) && sendAttackEnemyCoor();
+    attackEnemy.length === (totalEnemy-count) && sendAttackEnemyCoor();
+  }, [attackEnemy, count]);
   
   useEffect(() => {
     socket.on("resolved", (data) => {
-      console.log(data, `ini hasil resolved`)
+      console.log(data, `ini resolve`)
+      let newData = data.filter(player => !player.isLose)
+      let newLoseData = data.filter(player => player.isLose)
       let players = data.filter((board) => board.socketId === socket.id);
       let enemy = data.filter((board) => board.socketId != socket.id);
       setAttackEnemy([])
@@ -64,13 +64,12 @@ function Start(props) {
       setAttackFlag(false);
       setStyleBtn('btn')
       setIsBoardFilled(false)
+      newLoseData.length > 0 && setCount(newLoseData.length)
+      players[0].isLose && history.push("/endgame", {status: "loser", playerData: players[0]}) 
+      newData.length === 1 && !players[0].isLose && history.push("/endgame", {status: "winner", playerData: players[0]}) 
     });
 
-    socket.on("winner", (data) => {
-      console.log(data, `ini data winner`)
-      history.push("/endgame", {winner: data[0]})
-    })
-  }, []);
+    }, []);
   return (
     <div>
       <div>
@@ -78,17 +77,15 @@ function Start(props) {
       </div>
       <div>
         {enemyData.map((enemy, idx) => {
-          count++
-          console.log(count)
-          return (
-            <EnemyBoard
-            key={enemy.socketId}
+              return !enemy.isLose &&
+              <EnemyBoard
+              key={enemy.socketId}
+              countAttack={playerData[0]?.activePowers?.bombCount}
               attackFlag={attackFlag}
               handleAttackEnemy={handleAttackEnemy}
-              styleBtn={styleBtn}
+              setBtn={styleBtn}
               data={enemy}
             />
-          );
         })}
       </div>
       <div>
