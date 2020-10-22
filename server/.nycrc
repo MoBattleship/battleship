@@ -1,4 +1,9 @@
 {
   "check-coverage": true,
-  "all": true
+  "all": true,
+  "exclude": 
+  [
+    "app.js",
+    "mongo/index.js"
+  ]
 }
