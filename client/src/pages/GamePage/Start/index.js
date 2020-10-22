@@ -4,6 +4,7 @@ import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
 import { Chat, addResponseMessage, dropMessages } from 'react-chat-popup'
+import Swal from 'sweetalert2'
 
 function Start(props) {
   const history = useHistory()
@@ -28,7 +29,6 @@ function Start(props) {
   };
   
   const handleNewUserMessage = (newMessage) => {
-    console.log(playerData[0].name, "<<< ini namenya")
     socket.emit("chatMessage", { sender: playerData[0].name, message: newMessage })
   }
 
@@ -46,6 +46,69 @@ function Start(props) {
   }, [])
 
   useEffect(() => {
+    socket.on("bombCount", (data) => {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      
+      Toast.fire({
+        icon: 'success',
+        title: `${data}`
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    socket.on("power", (data) => {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      
+      Toast.fire({
+        icon: 'success',
+        title: `${data}`
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    socket.on("atlantisHit", () => {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      
+      Toast.fire({
+        icon: 'error',
+        title: `Oh No! Atlantis was hit.. 😥`
+      })
+    })
+  }, [])
+
+  useEffect(() => {
     function sendAttackEnemyCoor() {
       socket.emit("resolveAttacks", attackEnemy);
     }
@@ -53,6 +116,7 @@ function Start(props) {
     (attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === ((totalEnemy-count) + playerData[0]?.activePowers?.bombCount - 1) && sendAttackEnemyCoor():
     (attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === ((totalEnemy-count) + playerData[0]?.activePowers?.bombCount) && sendAttackEnemyCoor()
   }, [attackEnemy, count]);
+
   
   useEffect(() => {
     socket.on("resolved", (data) => {
