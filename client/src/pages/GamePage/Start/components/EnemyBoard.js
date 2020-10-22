@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
-function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn, countAttack}) {
+function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn, countAttack, handleSetBombCount}) {
+  // console.log(countAttack)
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach((el, idx) => {
@@ -94,18 +95,22 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn, countAttack}) 
     attackCoordinateTemp.length > 0 && revealAttackTemp()
     
   }, [attackCoordinateTemp])
-
+  
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      // countAttack--
-      // setCountAttacks(countAttack)
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
-      // countAttack === 0 && setIsAttack(true)
-      // countAttack === 0 && setStyleBtn('')
-      setIsAttack(true)
-      setStyleBtn('')
+      // setIsAttack(true)
+      // setStyleBtn('')
+      // console.log(countAttack, `ini count attack before`)
+      countAttack--
+      // console.log(countAttack, `ini count attack after`)
+      handleSetBombCount(countAttack)
+      countAttack === 0 && setIsAttack(true)
+      countAttack === 0 && setStyleBtn('')
+      // setCountAttacks(countAttack)
+      console.log(countAttacks, `ini count attakcssss`)
     }
   }
   
