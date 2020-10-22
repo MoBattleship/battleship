@@ -11,17 +11,20 @@ function Start(props) {
   let playersTemp = allData.filter((board) => board.socketId === socket.id);
   let enemyTemp = allData.filter((board) => board.socketId != socket.id);
   const [playerData, setPlayerData] = useState(playersTemp);
+  const [bombCount, setBombCount] = useState(playerData[0]?.activePowers?.bombCount);
   const [enemyData, setEnemyData] = useState(enemyTemp);
   const totalEnemy = allData.length - 1;
   const [attackEnemy, setAttackEnemy] = useState([]);
   const [attackFlag, setAttackFlag] = useState(false);
   const [isBoardFilled, setIsBoardFilled] = useState(false);
   const [styleBtn, setStyleBtn] = useState('btn');
-  console.log(playerData, `ini player data`)
   let [count, setCount] = useState(0)
   
   const handleAttackEnemy = (coor) => {
     setAttackEnemy([...attackEnemy, coor]);
+  };
+  const handleSetBombCount = (bomb) => {
+    setBombCount(bomb);
   };
   
   const handleNewUserMessage = (newMessage) => {
@@ -46,17 +49,18 @@ function Start(props) {
     function sendAttackEnemyCoor() {
       socket.emit("resolveAttacks", attackEnemy);
     }
-    // (attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === (totalEnemy-count) && sendAttackEnemyCoor();
-    attackEnemy.length === (totalEnemy-count) && sendAttackEnemyCoor();
+    playerData[0]?.activePowers?.bombCount < 2 ?
+    (attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === ((totalEnemy-count) + playerData[0]?.activePowers?.bombCount - 1) && sendAttackEnemyCoor():
+    (attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === ((totalEnemy-count) + playerData[0]?.activePowers?.bombCount) && sendAttackEnemyCoor()
   }, [attackEnemy, count]);
   
   useEffect(() => {
     socket.on("resolved", (data) => {
-      console.log(data, `ini resolve`)
       let newData = data.filter(player => !player.isLose)
       let newLoseData = data.filter(player => player.isLose)
       let players = data.filter((board) => board.socketId === socket.id);
       let enemy = data.filter((board) => board.socketId != socket.id);
+      setBombCount(players[0]?.activePowers?.bombCount)
       setAttackEnemy([])
       setAllData(data);
       setPlayerData(players);
@@ -81,7 +85,8 @@ function Start(props) {
               return !enemy.isLose &&
               <EnemyBoard
               key={enemy.socketId}
-              countAttack={playerData[0]?.activePowers?.bombCount}
+              handleSetBombCount={handleSetBombCount}
+              countAttack={bombCount}
               attackFlag={attackFlag}
               handleAttackEnemy={handleAttackEnemy}
               setBtn={styleBtn}
