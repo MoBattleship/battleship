@@ -32,13 +32,6 @@ describe("Dummy Test", () => {
 
         const equals = ['host', 'leave', 'join', 'changeColor', 'startGame', 'ready', 'resolveAttacks','chatMessage', 'typing', 'stopTyping', 'nukeDatabase', 'byebye']
 
-        // for (let i = 0; i < equals.length; i++) {
-        //   let spycal = socket.on.getCall(i)
-
-        //   expect(spycal.args[0]).to.be.equal(equals[i])
-        //   expect(spycal.args[1].to.be.a('function'))
-        // }
-
         const spycal0 = socket.on.getCall(0);
 
         expect(spycal0.args[0]).to.be.equal(equals[0]);
