@@ -322,6 +322,7 @@ module.exports = function (io) {
                   if (receiver.socketId === point.from) {
                     receiver.activePowers.bombCount += 1;
                     i === 0 ? bombCount.shift() : bombCount.pop()
+                    io.to(code).emit('bombCount', `${receiver.name} picked up the Bomb Count bonus`)
                   }
                 });
               }
@@ -332,6 +333,7 @@ module.exports = function (io) {
               lastBoard.forEach((receiver) => {
                 if (receiver.socketId === point.from) {
                   receiver.activePowers.bombPower = true;
+                  io.to(code).emit('power', `${receiver.name} picked up the Power bonus!`)
                   bombPower = []
                 }
               });

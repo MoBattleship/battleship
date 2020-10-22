@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "nyc mocha ./test/*.test.js --exit --all --timeout=5000",
+    "test": "nyc mocha --exit",
     "start": "nodemon app.js"
   },
   "keywords": [],
