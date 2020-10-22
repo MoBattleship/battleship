@@ -101,16 +101,10 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn, countAttack, h
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
-      // setIsAttack(true)
-      // setStyleBtn('')
-      // console.log(countAttack, `ini count attack before`)
       countAttack--
-      // console.log(countAttack, `ini count attack after`)
       handleSetBombCount(countAttack)
       countAttack === 0 && setIsAttack(true)
       countAttack === 0 && setStyleBtn('')
-      // setCountAttacks(countAttack)
-      console.log(countAttacks, `ini count attakcssss`)
     }
   }
   

@@ -316,11 +316,12 @@ module.exports = function (io) {
             });
 
             // Check Bomb Count
-            bombCount.forEach((bc) => {
+            bombCount.forEach((bc, i) => {
               if (`${point.coordinate}` === `${bc}`) {
                 lastBoard.forEach((receiver) => {
                   if (receiver.socketId === point.from) {
                     receiver.activePowers.bombCount += 1;
+                    i === 0 ? bombCount.shift() : bombCount.pop()
                   }
                 });
               }
@@ -331,6 +332,7 @@ module.exports = function (io) {
               lastBoard.forEach((receiver) => {
                 if (receiver.socketId === point.from) {
                   receiver.activePowers.bombPower = true;
+                  bombPower = []
                 }
               });
             }

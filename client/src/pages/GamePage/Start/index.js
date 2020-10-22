@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom'
 import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
-import { Chat, addResponseMessage } from 'react-chat-popup'
+import { Chat, addResponseMessage, dropMessages } from 'react-chat-popup'
 
 function Start(props) {
   const history = useHistory()
@@ -46,16 +46,7 @@ function Start(props) {
   }, [])
 
   useEffect(() => {
-    console.log(attackEnemy, `ini diluar emit`)
-    console.log(count, `count`)
-    console.log((attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1)) === (totalEnemy-count), `ini kondisi menjalankan emit`)
-    console.log(attackEnemy.length + (playerData[0]?.activePowers?.bombCount - 1), `ini atk length + bombcount`)
-    console.log(attackEnemy.length, `ini atk length`)
-    console.log(playerData[0]?.activePowers?.bombCount - 1, `ini bomb count`)
-    console.log(totalEnemy-count, `total eneymy - count`)
-    console.log(totalEnemy, `total enemy`)
     function sendAttackEnemyCoor() {
-      console.log(attackEnemy, `ini didalam emit`)
       socket.emit("resolveAttacks", attackEnemy);
     }
     playerData[0]?.activePowers?.bombCount < 2 ?
@@ -65,7 +56,6 @@ function Start(props) {
   
   useEffect(() => {
     socket.on("resolved", (data) => {
-      console.log(data, `resolved`)
       let newData = data.filter(player => !player.isLose)
       let newLoseData = data.filter(player => player.isLose)
       let players = data.filter((board) => board.socketId === socket.id);
@@ -80,7 +70,8 @@ function Start(props) {
       setIsBoardFilled(false)
       newLoseData.length > 0 && setCount(newLoseData.length)
       players[0].isLose && history.push("/endgame", {status: "loser", playerData: players[0]}) 
-      newData.length === 1 && !players[0].isLose && history.push("/endgame", {status: "winner", playerData: players[0]}) 
+      newData.length === 1 && !players[0].isLose && history.push("/endgame", {status: "winner", playerData: players[0]})
+      dropMessages() 
     });
 
     }, []);
