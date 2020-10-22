@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom'
 import socket from "../../../helpers/socket";
 import PlayerBoard from "./components/PlayerBoard";
 import EnemyBoard from "./components/EnemyBoard";
-import { Chat, addResponseMessage } from 'react-chat-popup'
+import { Chat, addResponseMessage, dropMessages } from 'react-chat-popup'
 
 function Start(props) {
   const history = useHistory()
@@ -66,7 +66,8 @@ function Start(props) {
       setIsBoardFilled(false)
       newLoseData.length > 0 && setCount(newLoseData.length)
       players[0].isLose && history.push("/endgame", {status: "loser", playerData: players[0]}) 
-      newData.length === 1 && !players[0].isLose && history.push("/endgame", {status: "winner", playerData: players[0]}) 
+      newData.length === 1 && !players[0].isLose && history.push("/endgame", {status: "winner", playerData: players[0]})
+      dropMessages() 
     });
 
     }, []);

@@ -33,22 +33,22 @@ import submarine1 from '../../../../assets/submarine/submarine1.png'
 import submarine2 from '../../../../assets/submarine/submarine2.png'
 import submarine3 from '../../../../assets/submarine/submarine3.png'
 
-// import submarinevertical1 from '../../../../assets/submarine/submarinevertical1.png'
-// import submarinevertical2 from '../../../../assets/submarine/submarinevertical2.png'
-// import submarinevertical3 from '../../../../assets/submarine/submarinevertical3.png'
+import submarinevertical1 from '../../../../assets/submarine/submarinevertical1.png'
+import submarinevertical2 from '../../../../assets/submarine/submarinevertical2.png'
+import submarinevertical3 from '../../../../assets/submarine/submarinevertical3.png'
 
 import destroyer1 from '../../../../assets/destroyer/destroyer1.png'
 import destroyer2 from '../../../../assets/destroyer/destroyer2.png'
 
-// import destroyervertical1 from '../../../../assets/destroyer/destroyervertical1.png'
-// import destroyervertical2 from '../../../../assets/destroyer/destroyervertical2.png'
+import destroyer1vertical from '../../../../assets/destroyer/destroyer1vertical.png'
+import destroyer2vertical from '../../../../assets/destroyer/destroyer2vertical.png'
 
 function PlayerComputer({ changeDisplay }) {
   const carriers = {row: [carrier1, carrier2, carrier3, carrier4, carrier5], column: [carriervertical5, carriervertical4, carriervertical3, carriervertical2, carriervertical1]}
   const battleships = {row: [battleship1, battleship2, battleship3, battleship4], column: [battleshipvertical4, battleshipvertical3, battleshipvertical2, battleshipvertical1]}
-  const submarines = [submarine1, submarine2, submarine3]
+  const submarines = {row: [submarine1, submarine2, submarine3], column: [submarinevertical3, submarinevertical2, submarinevertical1]}
   const cruisers = {row: [cruiser1, cruiser2, cruiser3], column: [cruiservertical3, cruiservertical2, cruiservertical1]}
-  const destroyers = [destroyer1, destroyer2]
+  const destroyers = {row: [destroyer1, destroyer2], column: [destroyer2vertical, destroyer1vertical]}
 
   // const carriersvertical = [carriervertical1, carriervertical2, carriervertical3, carriervertical4, carriervertical5]
   // const battleshipsvertical = [battleshipvertical1, battleshipvertical2, battleshipvertical3, battleshipvertical4]
@@ -222,7 +222,7 @@ function PlayerComputer({ changeDisplay }) {
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
                     // className="border border-white"
                     style={{
-                      backgroundImage: `url(${submarines[idx]})`,
+                      backgroundImage: `url(${submarines[position][idx]})`,
                       backgroundSize: 'contain',
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
@@ -254,7 +254,7 @@ function PlayerComputer({ changeDisplay }) {
                     onMouseEnter={(e) => onMouseEnter(e, idx+1)}
                     // className="border border-white"
                     style={{
-                      backgroundImage: `url(${destroyers[idx]})`,
+                      backgroundImage: `url(${destroyers[position][idx]})`,
                       backgroundSize: 'contain',
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
