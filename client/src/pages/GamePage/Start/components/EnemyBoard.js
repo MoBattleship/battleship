@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import socket from '../../../../helpers/socket'
 
-function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
+function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn, countAttack}) {
   let allShipsCoordinate = []
   data.coordinates.ships.forEach(ship => {
-    ship.isAlive && ship.coordinates.forEach(el => {
+    ship.isAlive && ship.coordinates.forEach((el, idx) => {
       allShipsCoordinate.push([el, true])
     })
     !ship.isAlive && ship.coordinates.forEach(el => {
@@ -17,19 +17,22 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
   const [plusPowerCoordinate, _plusPowerCoordinate] = useState(data.coordinates.bombPower)
   const attacked = data.coordinates?.attacked
 
-  let isAttack = attackFlag
-  let styleBtn = setBtn
+  // let isAttack = attackFlag
+  const [isAttack, setIsAttack] = useState(attackFlag)
+  const [styleBtn, setStyleBtn] = useState(setBtn)
   const [attackEnemy, setAttackEnemy] = useState({})
   const [attackCoordinateTemp, setAttackCoordinateTemp] = useState([])
+  const [countAttacks, setCountAttacks] = useState(countAttack)
 
   // DUMMY BOARDS
   const [boards, setBoards] = useState([])
   const [isBoardFilled, setIsBoardFilled] = useState(attackFlag)
   const alphabeth = "_ABCDEFGHIJKLMNO"
   const numbers = ["",1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-
   // Place Buff
   useEffect(() => {
+    setIsAttack(attackFlag)
+    setStyleBtn(setBtn)
     function generateBoard() {
       let newBoards = []
       for(let i = 0; i < 16; i++){
@@ -94,11 +97,15 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
 
   const handleAttack = (row, coll, socket) => {
     if(!isAttack){
-      isAttack = true
-      styleBtn = ''
+      // countAttack--
+      // setCountAttacks(countAttack)
       setAttackEnemy({...attackEnemy, [socket]: [row, coll]})
       setAttackCoordinateTemp([row, coll])
       handleAttackEnemy({socketId: socket, coordinate: [row, coll]})
+      // countAttack === 0 && setIsAttack(true)
+      // countAttack === 0 && setStyleBtn('')
+      setIsAttack(true)
+      setStyleBtn('')
     }
   }
   
@@ -142,7 +149,7 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll[0] === 'ship' && !coll[1] && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx} className={`border border-white ${styleBtn}`} style={{color: "red", backgroundColor: "red", width: "40px", height: "40px"}}></div>
+                          && coll[0] === 'ship' && !coll[1] && <div key={collIdx} className={`border border-white ${styleBtn}`} style={{color: "red", backgroundColor: "red", width: "40px", height: "40px"}}></div>
                         }
                         {
                           rowIdx !== 0 
@@ -152,7 +159,7 @@ function EnemyBoard({data, handleAttackEnemy, attackFlag, setBtn}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll[0] === 'hit' && <div onClick={() => handleAttack(rowIdx, collIdx, data.socketId)} key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "red", width: "40px", height: "40px"}}></div>
+                          && coll[0] === 'hit' && <div key={collIdx}  className={`border border-white ${styleBtn}`} style={{backgroundColor: "red", width: "40px", height: "40px"}}></div>
                         }
                       </div>
                     )

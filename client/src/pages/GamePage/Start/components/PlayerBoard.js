@@ -3,6 +3,7 @@ import socket from '../../../../helpers/socket'
 
 function PlayerBoard({data, isBoardFilled: fillBoard}) {
   let allShipsCoordinate = []
+  
   data.coordinates.ships.forEach(ship => {
     ship.isAlive && ship.coordinates.forEach(el => {
       allShipsCoordinate.push([el, true])
@@ -12,11 +13,6 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
     })
   })
   
-  // const atlantisCoordinate = data.coordinates.atlantis
-  // const plusBombCoordinate = data.coordinates.bombCount
-  // const plusPowerCoordinate = data.coordinates.bombPower
-  // const attackedCoordinate = data.attacked
-
   const [atlantisCoordinate, _atlantisCoordinate] = useState(data.coordinates.atlantis)
   const [plusBombCoordinate, _plusBombCoordinate] = useState(data.coordinates.bombCount)
   const [plusPowerCoordinate, _plusPowerCoordinate] = useState(data.coordinates.bombPower)
@@ -25,7 +21,6 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
   // DUMMY BOARDS
   const [boards, setBoards] = useState([])
   const [isBoardFilled, setIsBoardFilled] = useState(fillBoard)
-  // let isBoardFilled = fillBoard
   const alphabeth = "_ABCDEFGHIJKLMNO"
   const numbers = ["",1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
@@ -50,7 +45,6 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
         }
         boards.push(temp)
       }
-      // isBoardFilled = true
       setIsBoardFilled(true)
       setBoards(boards)
     }
@@ -76,14 +70,10 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
     function placeShips(){
       let newBoard = JSON.parse(JSON.stringify(boards))
       allShipsCoordinate.forEach((coor, i) => {
-        console.log(coor, `ini coor tapi di playerboard`)
         newBoard[coor[0][0]][coor[0][1]] = ['ship', coor[1]]
       })
-      console.log(newBoard, `ini new board`)
       setBoards(newBoard)
     }
-    // console.log(boards.length, `ini boards length`)
-    // console.log(isBoardFilled, `ini isboardfilled`)
     boards.length > 1 && placeShips()
   }, [isBoardFilled, data])
   return (
@@ -121,7 +111,7 @@ function PlayerBoard({data, isBoardFilled: fillBoard}) {
                         {
                           rowIdx !== 0 
                           && collIdx !== 0 
-                          && coll[0] === 'ship' && coll[1] && <div key={collIdx} className="border border-white" style={{backgroundColor: "yellow", width: "40px", height: "40px"}}>S</div>
+                          && coll[0] === 'ship' && coll[1] && <div key={collIdx} className="border border-white" style={{backgroundColor: data.color, width: "40px", height: "40px"}}>S</div>
                         }
                         {
                           rowIdx !== 0 

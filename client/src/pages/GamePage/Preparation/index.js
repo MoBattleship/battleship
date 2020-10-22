@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import { Chat, addResponseMessage } from 'react-chat-popup'
-// import useDraggable from '../../../helpers/use-draggable'
 
 import Preparation from './components/Preparation'
 import PlayerComputer from './components/PlayerComputer'
@@ -8,8 +7,6 @@ import socket from '../../../helpers/socket'
 
 function GamePage(props) {
   const [display, setDisplay] = useState('')
-  const [inputMessage, setInputMessage] = useState('')
-  // const {position} = useDraggable("chat-button")
 
   const players = props?.location?.state?.playersData
   const code = props?.location?.state?.roomCode
@@ -22,6 +19,10 @@ function GamePage(props) {
       }
     })
     socket.emit("chatMessage", {sender: senderName, message: newMessage})
+  }
+
+  function handleNewMessage(newMessage) {
+    socket.emit("chatMessage", {message: newMessage})
   }
 
   useEffect(() => {
@@ -56,8 +57,6 @@ function GamePage(props) {
       </div>
       <div>
         <Chat
-        // style={{top:position.y, left:position.x}}
-        id="chat-button"
         senderPlaceHolder="Type your message here..."
         badge={0}
         title="Chatbox"
